@@ -90,3 +90,10 @@ _HANDOFF/
 # Large test artifacts
 test_size_*.txt
 test_write_*.txt
+
+# Debug output files
+api_err.txt
+api_out.txt
+pytest_*_debug.txt
+pytest_*_final.txt
+pytest_output_*.txt
