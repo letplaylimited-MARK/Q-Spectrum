@@ -1,0 +1,113 @@
+{
+  "version": "V1.5",
+  "last_updated": "2026-04-21",
+  "dimensions": [
+    {
+      "id": "D01",
+      "name": "角色路由",
+      "name_en": "Role Routing",
+      "score": 85,
+      "target": 95,
+      "weight": 0.20,
+      "trend": "+10%",
+      "last_check": "2026-04-21",
+      "notes": "飞轮#07路由精准+触发词扩展"
+    },
+    {
+      "id": "D02",
+      "name": "知识检索",
+      "name_en": "Knowledge Retrieval",
+      "score": 78,
+      "target": 90,
+      "weight": 0.15,
+      "trend": "+8%",
+      "last_check": "2026-04-21"
+    },
+    {
+      "id": "D03",
+      "name": "记忆沉淀",
+      "name_en": "Memory Crystallization",
+      "score": 88,
+      "target": 90,
+      "weight": 0.15,
+      "trend": "+23%",
+      "last_check": "2026-04-21",
+      "notes": "费曼卡片10张+每日日志"
+    },
+    {
+      "id": "D04",
+      "name": "涌现判断",
+      "name_en": "Emergence Detection",
+      "score": 75,
+      "target": 85,
+      "weight": 0.15,
+      "trend": "+15%",
+      "last_check": "2026-04-21",
+      "notes": "飞轮#07 R值0.77持续"
+    },
+    {
+      "id": "D05",
+      "name": "多视角思维",
+      "name_en": "Multi-dimensional Thinking",
+      "score": 85,
+      "target": 95,
+      "weight": 0.15,
+      "trend": "+10%",
+      "last_check": "2026-04-21"
+    },
+    {
+      "id": "D06",
+      "name": "自我进化",
+      "name_en": "Self-Evolution",
+      "score": 78,
+      "target": 90,
+      "weight": 0.20,
+      "trend": "+28%",
+      "last_check": "2026-04-21",
+      "notes": "飞轮#01-#07完成，7轮迭代，活系统建立"
+    }
+  ],
+  "overall": {
+    "current": 80,
+    "target": 90,
+    "gap": 10,
+    "milestone": "80%达成 ⭐"
+  },
+  "evolution": [
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#01完成",
+      "impact": "自我进化+15%，费曼卡片9张"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#02完成",
+      "impact": "自检机制+自动化配置"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#03完成",
+      "impact": "涌现触发+知识检索优化"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#04完成",
+      "impact": "角色路由测试+知识图谱扩展"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#05完成",
+      "impact": "能力综合提升+2%"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#06完成",
+      "impact": "涌现突破R值0.77"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "飞轮迭代#07完成",
+      "impact": "80%综合评分里程碑达成，活系统建立"
+    }
+  ]
+}

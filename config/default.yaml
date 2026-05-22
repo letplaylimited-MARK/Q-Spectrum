@@ -1,0 +1,67 @@
+# Q-SpecTrum 默认配置
+# 复制为 local.yaml 并填入你的 API Key
+
+# === LLM 配置 ===
+llm:
+  provider: "mock"             # mock (default) / openai / anthropic / ollama
+  api_key: ""                  # 填入 API Key 后切换 provider
+  model: "gpt-4o"              # 使用 openai 时的推荐模型
+  temperature: 0.7
+  max_tokens: 4096
+
+  # Anthropic 配置（如使用 Anthropic）
+  # provider: "anthropic"
+  # api_key: "YOUR_ANTHROPIC_KEY"
+  # model: "claude-sonnet-4-20250514"
+
+  # 本地 LLM 配置
+  # provider: "local"
+  # base_url: "http://localhost:11434/v1"
+  # model: "llama3"
+
+# === Embedding 配置（知识共振引擎）===
+embedding:
+  model: "BAAI/bge-base-zh-v1.5"
+  dimension: 768
+  batch_size: 32
+
+# === 数据库配置 ===
+database:
+  path: "AI项目管理/Platform/db/platform.db"
+  backup_interval_minutes: 15
+
+# === Secretary 网关配置 ===
+secretary:
+  radar_dimensions: 5          # 五维雷达扫描
+  default_qos: "assured"       # best-effort / assured / guaranteed
+  default_governance: "medium"  # light / medium / heavy
+
+# === 知识共振引擎配置 ===
+knowledge_resonance:
+  weights:
+    k_sim: 0.35                # 语义相似度权重
+    c_comp: 0.25               # 结构互补性权重
+    i_freq: 0.25               # 交互频率权重
+    e_div: 0.15                # 认知分歧权重(负向)
+  threshold:
+    high: 0.75                 # 高质量，直接使用
+    medium: 0.50               # 中等，需 Analyst 验证
+    low: 0.50                  # 低于此值，需人工审核
+
+# === 用户成长体系 ===
+growth:
+  initial_stage: "S1"          # 新用户起始阶段
+  auto_evaluate: true          # 自动评估阶段晋级
+
+# === Ghost Channel 配置 ===
+ghost_channel:
+  encryption: "AES-256-GCM"
+  key_rotation_hours: 12
+  delta_compression: true
+  sync_interval_seconds: 300
+
+# === 日志配置 ===
+logging:
+  level: "INFO"                # DEBUG / INFO / WARNING / ERROR
+  file: "q-spectrum.log"
+  audit_trail: true

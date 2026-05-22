@@ -1,0 +1,31 @@
+[project]
+name = "q-spectrum"
+version = "1.0.0"
+description = "Q-SpecTrum 智腦開發系統 - AI-Driven Project Management"
+requires-python = ">=3.10"
+dependencies = [
+    "chromadb>=1.5.0",
+    "networkx>=3.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+extend-exclude = ["BRAIN-KB/*", "_HANDOFF/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # Line too long - cosmetic, not critical
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::pytest.PytestReturnNotNoneWarning",
+    "ignore::pytest.PytestCollectionWarning",
+]
+addopts = "-v --tb=short"

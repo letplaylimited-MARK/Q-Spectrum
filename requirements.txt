@@ -1,0 +1,3 @@
+# Q-SpecTrum Project Dependencies
+# This project uses only Python standard library packages
+# No third-party packages required

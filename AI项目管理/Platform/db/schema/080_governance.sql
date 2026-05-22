@@ -1,0 +1,3 @@
+-- Governance tables have been merged into 060_validation.sql.
+-- This file is kept as a placeholder to maintain the bootstrap script order.
+-- release_decisions is already defined in 060_validation.sql.

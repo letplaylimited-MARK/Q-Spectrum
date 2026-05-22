@@ -1,0 +1,29 @@
+{
+  "qcm_version": "1.1.0",
+  "last_updated": "2026-04-20",
+  "schema_version": 1,
+  "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-04-20",
+      "changes": [
+        "Fixed _INDEX.md to match actual directory structure (4 dirs, not 14)",
+        "Removed references to non-existent directories: ghost-channel/, papers/, dev/, archive/",
+        "Removed reference to non-existent .cloneignore file",
+        "Updated mother_only_dirs and removed clonable_dirs (ghost-channel no longer exists)",
+        "Added complete file listings for all 4 directories"
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-04-09",
+      "changes": [
+        "Initial six-layer architecture restructure",
+        "Separated clonable zone (core + ghost-channel) from mother-only zone",
+        "Created .cloneignore for smart cloning",
+        "Consolidated 68 files/directories into structured layers"
+      ]
+    }
+  ],
+  "directories": ["core", "whitepapers", "strategy", "deliverables"]
+}

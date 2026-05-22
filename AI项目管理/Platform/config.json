@@ -1,0 +1,27 @@
+{
+  "version": "4.1.0",
+  "project_id": "ai-project-mgmt-master-template",
+  "project_name": "AI项目管理",
+  "root_path": ".",
+  "db_path": "Platform/db/platform.db",
+  "db_fallback": [
+    "Platform/db/platform.db",
+    "Platform/db/platform_restored.db",
+    "Platform/db/platform_v4.1.db"
+  ],
+  "scripts_path": "Platform/scripts",
+  "roles_path": "roles",
+  "docs_path": "docs",
+  "assets_path": "Assets",
+  "systems_path": "Systems",
+  "operations_path": "Operations",
+  "q_spectrum_root": "..",
+  "windows_root": ".",
+  "notes": [
+    "v4.1.0: Relative paths for cross-platform compatibility",
+    "db_path points to platform.db (active DB, 40 tables/85 rows)",
+    "db_fallback: ordered list of DB candidates for runtime resolution",
+    "windows_root: reference only, used by cleanup_windows.bat",
+    "All paths relative to AI项目管理/ directory"
+  ]
+}

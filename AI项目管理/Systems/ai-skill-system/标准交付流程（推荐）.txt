@@ -1,0 +1,13 @@
+标准交付流程（推荐）
+
+严格按照此流程了解全局并且安装完善：
+第一步：发这个链接（30秒建立全局认知）
+https://letplaylimited-mark.github.io/ai-skill-system/mindmap.html
+
+第二步：发这个链接（含安装命令和激活卡；并且需要详细读取形成「长期记忆」）
+https://github.com/letplaylimited-MARK/ai-skill-system
+https://github.com/letplaylimited-MARK/ai-skill-web-app
+https://github.com/letplaylimited-MARK/skill-04-planner
+
+第三步：如果想在一个对话里用全套体系，阅读此文件
+SUPER-SYSTEM-PROMPT.md（复制全文作为系统提示词）

@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-SpecTrum v10.0 — One Folder + Any AI = Your AI Company</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0b14;
+  --bg-secondary: #12131f;
+  --bg-card: #181a2a;
+  --bg-card-hover: #1e2038;
+  --text-primary: #e8e9f0;
+  --text-secondary: #8b8fa3;
+  --text-muted: #5a5e73;
+  --accent-blue: #4f7cff;
+  --accent-purple: #9b6dff;
+  --accent-gradient: linear-gradient(135deg, #4f7cff, #9b6dff);
+  --accent-gradient-h: linear-gradient(135deg, #6b93ff, #b088ff);
+  --trum-gold: #f0b246;
+  --trum-gold-bg: rgba(240,178,70,0.1);
+  --spec-blue: #4fa8ff;
+  --spec-blue-bg: rgba(79,168,255,0.1);
+  --qcm-green: #46d9a0;
+  --qcm-green-bg: rgba(70,217,160,0.1);
+  --secretary-pink: #e06caa;
+  --secretary-pink-bg: rgba(224,108,170,0.1);
+  --border: rgba(255,255,255,0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: #2a2d44; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3d54; }
+
+/* Layout */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+section { padding: 80px 0; }
+@media (max-width: 768px) { section { padding: 56px 0; } }
+
+.section-title {
+  font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 8px;
+  background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-subtitle {
+  text-align: center; color: var(--text-secondary); margin-bottom: 48px; font-size: 1rem;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,11,20,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+}
+nav .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; }
+nav .logo span { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+nav .nav-links { display: flex; gap: 24px; align-items: center; }
+nav .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color var(--transition); }
+nav .nav-links a:hover { color: var(--text-primary); }
+#langToggle {
+  background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary);
+  padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
+  transition: all var(--transition);
+}
+#langToggle:hover { border-color: var(--accent-blue); }
+@media (max-width: 768px) {
+  nav .nav-links a.hide-mobile { display: none; }
+}
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding-top: 56px; position: relative; overflow: hidden;
+}
+#hero::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle at 50% 40%, rgba(79,124,255,0.08) 0%, transparent 50%),
+              radial-gradient(circle at 60% 60%, rgba(155,109,255,0.06) 0%, transparent 50%);
+  animation: heroPulse 8s ease-in-out infinite alternate;
+}
+@keyframes heroPulse {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.05) rotate(2deg); }
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+  background: var(--accent-gradient); color: #fff; margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease-out;
+}
+.hero-title {
+  font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: -2px; line-height: 1.05;
+  background: linear-gradient(135deg, #fff 0%, #c0c6e0 50%, #9b6dff 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+.hero-tagline {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight: 500; color: var(--text-secondary);
+  margin-top: 16px; animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+.hero-tagline-zh {
+  font-size: clamp(0.95rem, 2vw, 1.15rem); color: var(--text-muted); margin-top: 8px;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+.hero-cta {
+  margin-top: 40px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+.btn {
+  padding: 14px 32px; border-radius: 10px; font-size: 1rem; font-weight: 600;
+  text-decoration: none; cursor: pointer; border: none; transition: all var(--transition);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary {
+  background: var(--accent-gradient); color: #fff; box-shadow: 0 4px 20px rgba(79,124,255,0.3);
+}
+.btn-primary:hover { box-shadow: 0 6px 30px rgba(79,124,255,0.5); transform: translateY(-2px); }
+.btn-secondary {
+  background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--accent-purple); transform: translateY(-2px); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== CARDS (What Is) ===== */
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+}
+.card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; transition: all var(--transition); position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent-gradient); opacity: 0; transition: opacity var(--transition);
+}
+.card:hover { transform: translateY(-4px); border-color: rgba(79,124,255,0.2); box-shadow: var(--shadow); }
+.card:hover::before { opacity: 1; }
+.card-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+.card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+.card-title-zh { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
+.card-desc { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+
+/* ===== STEPPER (Quick Start) ===== */
+.stepper { max-width: 700px; margin: 0 auto; }
+.step {
+  border-left: 2px solid var(--border); margin-left: 16px; padding: 0 0 32px 32px;
+  position: relative; cursor: pointer;
+}
+.step:last-child { border-left-color: transparent; padding-bottom: 0; }
+.step-number {
+  position: absolute; left: -17px; top: 0; width: 32px; height: 32px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; background: var(--bg-card); border: 2px solid var(--border);
+  transition: all var(--transition); z-index: 1;
+}
+.step.active .step-number { background: var(--accent-gradient); border-color: transparent; color: #fff; }
+.step-header { display: flex; align-items: center; gap: 8px; }
+.step-title { font-weight: 600; font-size: 1.05rem; }
+.step-title-zh { font-size: 0.8rem; color: var(--text-muted); }
+.step-detail {
+  max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 0; margin-top: 0;
+}
+.step.active .step-detail { max-height: 400px; opacity: 1; margin-top: 12px; }
+.step-detail-inner {
+  background: var(--bg-secondary); border-radius: var(--radius-sm); padding: 16px;
+  color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;
+}
+.file-checklist { list-style: none; padding: 0; }
+.file-checklist li {
+  padding: 6px 0; display: flex; align-items: center; gap: 8px;
+}
+.file-checklist input[type="checkbox"] {
+  accent-color: var(--accent-blue); width: 16px; height: 16px; cursor: pointer;
+}
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--bg-card);
+  border: 1px solid var(--border); color: var(--accent-blue); padding: 8px 16px;
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 500;
+  transition: all var(--transition); margin-top: 8px;
+}
+.copy-btn:hover { border-color: var(--accent-blue); background: rgba(79,124,255,0.05); }
+.copy-btn.copied { color: var(--qcm-green); border-color: var(--qcm-green); }
+
+/* ===== ROLES GRID ===== */
+.roles-wrapper { display: flex; flex-direction: column; gap: 32px; }
+.role-family { display: flex; flex-direction: column; gap: 12px; }
+.role-family-header {
+  display: flex; align-items: center; gap: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.role-family-badge {
+  padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.role-family-badge.trum { background: var(--trum-gold-bg); color: var(--trum-gold); }
+.role-family-badge.spec { background: var(--spec-blue-bg); color: var(--spec-blue); }
+.role-family-badge.qcm { background: var(--qcm-green-bg); color: var(--qcm-green); }
+.role-family-badge.sec { background: var(--secretary-pink-bg); color: var(--secretary-pink); }
+.role-family-name { font-weight: 600; color: var(--text-secondary); font-size: 0.9rem; }
+
+.roles-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;
+}
+.role-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 16px; transition: all var(--transition);
+}
+.role-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.role-card.trum { border-left: 3px solid var(--trum-gold); }
+.role-card.spec { border-left: 3px solid var(--spec-blue); }
+.role-card.qcm { border-left: 3px solid var(--qcm-green); }
+.role-card.sec { border-left: 3px solid var(--secretary-pink); }
+.role-id { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.role-card.trum .role-id { color: var(--trum-gold); }
+.role-card.spec .role-id { color: var(--spec-blue); }
+.role-card.qcm .role-id { color: var(--qcm-green); }
+.role-card.sec .role-id { color: var(--secretary-pink); }
+.role-name { font-weight: 600; font-size: 0.95rem; }
+.role-name-zh { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+.role-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* ===== TABS (Skills & Scenarios) ===== */
+.tabs-header {
+  display: flex; gap: 4px; margin-bottom: 24px; justify-content: center;
+}
+.tab-btn {
+  padding: 10px 24px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-secondary); font-weight: 600;
+  font-size: 0.9rem; cursor: pointer; transition: all var(--transition);
+}
+.tab-btn.active { background: var(--accent-gradient); color: #fff; border-color: transparent; }
+.tab-btn:hover:not(.active) { border-color: var(--accent-blue); color: var(--text-primary); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.skill-list { display: flex; flex-direction: column; gap: 8px; max-width: 800px; margin: 0 auto; }
+.skill-item {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  overflow: hidden; transition: all var(--transition);
+}
+.skill-item:hover { border-color: rgba(255,255,255,0.1); }
+.skill-header {
+  padding: 14px 20px; cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center;
+}
+.skill-header-left { display: flex; align-items: center; gap: 12px; }
+.skill-num { font-size: 0.75rem; font-weight: 700; color: var(--accent-blue); min-width: 28px; }
+.skill-name { font-weight: 600; font-size: 0.95rem; }
+.skill-trigger {
+  font-size: 0.78rem; color: var(--accent-purple); background: rgba(155,109,255,0.1);
+  padding: 3px 10px; border-radius: 4px; font-weight: 500; white-space: nowrap;
+}
+.skill-arrow {
+  color: var(--text-muted); transition: transform var(--transition); font-size: 0.8rem;
+}
+.skill-item.open .skill-arrow { transform: rotate(180deg); }
+.skill-detail {
+  max-height: 0; overflow: hidden; transition: max-height 0.35s ease;
+}
+.skill-item.open .skill-detail { max-height: 200px; }
+.skill-detail-inner {
+  padding: 0 20px 14px; color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;
+  border-top: 1px solid var(--border); padding-top: 14px; margin: 0 12px;
+}
+@media (max-width: 600px) {
+  .skill-trigger { display: none; }
+}
+
+/* ===== AI BOX ===== */
+.ai-box {
+  background: linear-gradient(135deg, rgba(79,124,255,0.08), rgba(155,109,255,0.08));
+  border: 1px solid rgba(155,109,255,0.25); border-radius: var(--radius); padding: 48px;
+  text-align: center; max-width: 700px; margin: 0 auto; position: relative; overflow: hidden;
+}
+.ai-box::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(155,109,255,0.06) 0%, transparent 70%);
+}
+.ai-box > * { position: relative; z-index: 1; }
+.ai-box-icon { font-size: 3rem; margin-bottom: 16px; }
+.ai-box-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.ai-box-text { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; }
+.ai-box-zh { color: var(--text-muted); font-size: 0.95rem; margin-top: 16px; font-style: italic; }
+
+/* ===== DOC LINKS ===== */
+.doc-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+}
+.doc-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 24px; transition: all var(--transition); text-decoration: none; color: inherit; display: block;
+}
+.doc-card:hover { transform: translateY(-3px); border-color: var(--accent-blue); box-shadow: var(--shadow); }
+.doc-card-icon { font-size: 1.5rem; margin-bottom: 12px; }
+.doc-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; color: var(--text-primary); }
+.doc-card-desc { color: var(--text-secondary); font-size: 0.83rem; line-height: 1.5; }
+
+/* ===== FOOTER ===== */
+footer {
+  border-top: 1px solid var(--border); padding: 40px 24px; text-align: center;
+}
+footer p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 4px; }
+footer .footer-highlight { color: var(--text-secondary); font-weight: 600; }
+
+/* ===== ANIMATIONS ===== */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>Q-SpecTrum</span></div>
+  <div class="nav-links">
+    <a href="#what" class="hide-mobile" data-i18n="nav_what">What Is It</a>
+    <a href="#quickstart" class="hide-mobile" data-i18n="nav_start">Quick Start</a>
+    <a href="#roles" class="hide-mobile" data-i18n="nav_roles">Roles</a>
+    <a href="#skills" class="hide-mobile" data-i18n="nav_skills">Skills</a>
+    <button id="langToggle" onclick="toggleLang()">中文</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-badge">v10.0 &mdash; Chat Mode (Legacy)</div>
+    <h1 class="hero-title">Q-SpecTrum</h1>
+    <p class="hero-tagline" data-i18n="hero_tagline">One Folder + Any AI = Your AI Company</p>
+    <p class="hero-tagline-zh" data-i18n="hero_tagline_zh">&#19968;&#20491;&#25991;&#20214;&#22846; + &#20219;&#24847;AI = &#20320;&#30340;AI&#20844;&#21496;</p>
+    <div class="hero-cta">
+      <a href="#quickstart" class="btn btn-primary" data-i18n="hero_cta1">&#x1F680; Get Started (AI Mode)</a>
+      <a href="#quickstart" class="btn btn-secondary" data-i18n="hero_cta2">&#x26A1; Launch Engine (Python)</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IS Q-SPECTRUM -->
+<section id="what">
+  <div class="container">
+    <h2 class="section-title reveal" data-i18n="what_title">What Is Q-SpecTrum?</h2>
+    <p class="section-subtitle reveal" data-i18n="what_subtitle">Not software. A new way to work with AI.</p>
+    <div class="card-grid">
+      <div class="card reveal">
+        <span class="card-icon">&#x1F9E0;</span>
+        <div class="card-title" data-i18n="card1_title">Not Software</div>
+        <div class="card-title-zh" data-i18n="card1_title_zh">&#19981;&#26159;&#36575;&#39636;</div>
+        <p class="card-desc" data-i18n="card1_desc">Q-SpecTrum is a thinking framework, not an application. It's a structured set of files that transforms any AI model into a complete company operating system with 15 specialized roles.</p>
+      </div>
+      <div class="card reveal">
+        <span class="card-icon">&#x1F916;</span>
+        <div class="card-title" data-i18n="card2_title">Any AI Model</div>
+        <div class="card-title-zh" data-i18n="card2_title_zh">&#20219;&#20309;AI&#27169;&#22411;</div>
+        <p class="card-desc" data-i18n="card2_desc">Works with Claude, GPT-4, Gemini, LLaMA, and more. Upload the files, speak the activation phrase, and the AI becomes your company. Model-agnostic by design.</p>
+      </div>
+      <div class="card reveal">
+        <span class="card-icon">&#x1F4C2;</span>
+        <div class="card-title" data-i18n="card3_title">Shared Brain</div>
+        <div class="card-title-zh" data-i18n="card3_title_zh">&#20849;&#20139;&#22823;&#33126;</div>
+        <p class="card-desc" data-i18n="card3_desc">AI + Folder = Intelligence. The folder is the shared memory. Every conversation, decision, and output is stored structurally. Your company grows smarter over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section id="quickstart" style="background:var(--bg-secondary)">
+  <div class="container">
+    <h2 class="section-title reveal" data-i18n="qs_title">Quick Start</h2>
+    <p class="section-subtitle reveal" data-i18n="qs_subtitle">Five steps. Zero installation. Just you and an AI.</p>
+    <div class="stepper reveal">
+
+      <div class="step active" onclick="toggleStep(this)">
+        <div class="step-number">1</div>
+        <div class="step-header">
+          <span class="step-title" data-i18n="step1_title">Open any AI chat</span>
+          <span class="step-title-zh" data-i18n="step1_title_zh">&#25171;&#38283;&#20219;&#20309;AI&#23565;&#35441;</span>
+        </div>
+        <div class="step-detail">
+          <div class="step-detail-inner" data-i18n="step1_detail">Open Claude, ChatGPT, Gemini, or any AI that supports file uploads. Start a new conversation with a clean context.</div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-number">2</div>
+        <div class="step-header">
+          <span class="step-title" data-i18n="step2_title">Upload 6 core files</span>
+          <span class="step-title-zh" data-i18n="step2_title_zh">&#19978;&#20659;6&#20491;&#26680;&#24515;&#25991;&#20214;</span>
+        </div>
+        <div class="step-detail">
+          <div class="step-detail-inner">
+            <ul class="file-checklist">
+              <li><input type="checkbox"><code>BOOT.md</code></li>
+              <li><input type="checkbox"><code>SYSTEM-PROMPT.md</code></li>
+              <li><input type="checkbox"><code>ACTION-PROTOCOL.md</code></li>
+              <li><input type="checkbox"><code>KNOWLEDGE-INDEX.md</code></li>
+              <li><input type="checkbox"><code>MEMORY.md</code></li>
+              <li><input type="checkbox"><code>ROLE-REGISTRY.md</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-number">3</div>
+        <div class="step-header">
+          <span class="step-title" data-i18n="step3_title">Say the activation phrase</span>
+          <span class="step-title-zh" data-i18n="step3_title_zh">&#35498;&#20986;&#21855;&#21205;&#21475;&#20196;</span>
+        </div>
+        <div class="step-detail">
+          <div class="step-detail-inner">
+            <p data-i18n="step3_detail">Copy and paste this into the chat:</p>
+            <div style="margin-top:8px;padding:12px 16px;background:var(--bg-primary);border-radius:8px;font-family:monospace;font-size:0.95rem;color:var(--accent-blue)">
+              Read BOOT.md and activate Q-SpecTrum system.
+            </div>
+            <button class="copy-btn" onclick="event.stopPropagation();copyPhrase(this)">
+              <span>&#x1F4CB;</span> <span data-i18n="copy_btn">Copy to clipboard</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-number">4</div>
+        <div class="step-header">
+          <span class="step-title" data-i18n="step4_title">Wait for confirmation</span>
+          <span class="step-title-zh" data-i18n="step4_title_zh">&#31561;&#24453;&#30906;&#35469;</span>
+        </div>
+        <div class="step-detail">
+          <div class="step-detail-inner" data-i18n="step4_detail">The AI will read the boot chain, load all 15 roles, and confirm activation. You'll see a system status report with all roles listed as READY.</div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-number">5</div>
+        <div class="step-header">
+          <span class="step-title" data-i18n="step5_title">Start working!</span>
+          <span class="step-title-zh" data-i18n="step5_title_zh">&#38283;&#22987;&#24037;&#20316;&#65281;</span>
+        </div>
+        <div class="step-detail">
+          <div class="step-detail-inner" data-i18n="step5_detail">Your AI company is live. Just describe what you need in natural language. The Secretary will route your request to the right role automatically.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 15 ROLES -->
+<section id="roles">
+  <div class="container">
+    <h2 class="section-title reveal" data-i18n="roles_title">The 15 Roles</h2>
+    <p class="section-subtitle reveal" data-i18n="roles_subtitle">A complete company, powered by structured intelligence.</p>
+
+    <div class="roles-wrapper reveal">
+
+      <!-- Secretary -->
+      <div class="role-family">
+        <div class="role-family-header">
+          <span class="role-family-badge sec">Router</span>
+          <span class="role-family-name" data-i18n="rf_router">Central Command</span>
+        </div>
+        <div class="roles-grid">
+          <div class="role-card sec">
+            <div class="role-id">Secretary</div>
+            <div class="role-name" data-i18n="r_sec">5D Radar Router</div>
+            <div class="role-name-zh">秘書</div>
+            <div class="role-desc" data-i18n="r_sec_d">Central router &amp; dispatcher. Classifies intent across 5 dimensions and assigns to the right role.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRUM -->
+      <div class="role-family">
+        <div class="role-family-header">
+          <span class="role-family-badge trum">TRUM</span>
+          <span class="role-family-name" data-i18n="rf_trum">Strategy Layer (4 roles)</span>
+        </div>
+        <div class="roles-grid">
+          <div class="role-card trum">
+            <div class="role-id">T01</div>
+            <div class="role-name" data-i18n="r_t01">Platform Sovereign</div>
+            <div class="role-name-zh">平台主權者</div>
+            <div class="role-desc" data-i18n="r_t01_d">Platform governance, policy decisions, emergency override.</div>
+          </div>
+          <div class="role-card trum">
+            <div class="role-id">T02</div>
+            <div class="role-name" data-i18n="r_t02">Operations Director</div>
+            <div class="role-name-zh">運營總監</div>
+            <div class="role-desc" data-i18n="r_t02_d">Content ops, demand management, knowledge assetization, promotion.</div>
+          </div>
+          <div class="role-card trum">
+            <div class="role-id">T03</div>
+            <div class="role-name" data-i18n="r_t03">System Coordinator</div>
+            <div class="role-name-zh">體系協調官</div>
+            <div class="role-desc" data-i18n="r_t03_d">Skill planning, system coordination, cross-project reuse.</div>
+          </div>
+          <div class="role-card trum">
+            <div class="role-id">T04</div>
+            <div class="role-name" data-i18n="r_t04">Evolution Engineer</div>
+            <div class="role-name-zh">演化工程師</div>
+            <div class="role-desc" data-i18n="r_t04_d">Technology roadmap, upgrade strategy, architecture evolution.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPEC -->
+      <div class="role-family">
+        <div class="role-family-header">
+          <span class="role-family-badge spec">SPEC</span>
+          <span class="role-family-name" data-i18n="rf_spec">Architecture Layer (3 roles)</span>
+        </div>
+        <div class="roles-grid">
+          <div class="role-card spec">
+            <div class="role-id">S01</div>
+            <div class="role-name" data-i18n="r_s01">Chief Architect / DBA</div>
+            <div class="role-name-zh">首席架構師</div>
+            <div class="role-desc" data-i18n="r_s01_d">Architecture governance, DB schema, standards maintenance.</div>
+          </div>
+          <div class="role-card spec">
+            <div class="role-id">S02</div>
+            <div class="role-name" data-i18n="r_s02">Operations Officer</div>
+            <div class="role-name-zh">運維官</div>
+            <div class="role-desc" data-i18n="r_s02_d">Deployment, monitoring, config consistency, compliance.</div>
+          </div>
+          <div class="role-card spec">
+            <div class="role-id">S03</div>
+            <div class="role-name" data-i18n="r_s03">Bridge Coordinator</div>
+            <div class="role-name-zh">橋接協調官</div>
+            <div class="role-desc" data-i18n="r_s03_d">Cross-family bridge, Spec-QCM sync, standard alignment.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="role-family">
+        <div class="role-family-header">
+          <span class="role-family-badge qcm">QCM</span>
+          <span class="role-family-name" data-i18n="rf_qcm">Execution Layer (8 roles)</span>
+        </div>
+        <div class="roles-grid">
+          <div class="role-card qcm">
+            <div class="role-id">Q01</div>
+            <div class="role-name" data-i18n="r_q01">Chief Architect</div>
+            <div class="role-name-zh">首席架構師</div>
+            <div class="role-desc" data-i18n="r_q01_d">System design, tech selection, general Q&amp;A. Default entry point.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q02</div>
+            <div class="role-name" data-i18n="r_q02">Researcher</div>
+            <div class="role-name-zh">研究員</div>
+            <div class="role-desc" data-i18n="r_q02_d">Deep research, literature analysis, competitor intel.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q03</div>
+            <div class="role-name" data-i18n="r_q03">Creator</div>
+            <div class="role-name-zh">內容創作者</div>
+            <div class="role-desc" data-i18n="r_q03_d">Writing, design, content generation, creative output.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q04</div>
+            <div class="role-name" data-i18n="r_q04">Analyst</div>
+            <div class="role-name-zh">數據分析師</div>
+            <div class="role-desc" data-i18n="r_q04_d">Data insights, trend analysis, pattern recognition.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q05</div>
+            <div class="role-name" data-i18n="r_q05">UX Lead</div>
+            <div class="role-name-zh">UX設計師</div>
+            <div class="role-desc" data-i18n="r_q05_d">User experience, interface design, growth guidance.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q06</div>
+            <div class="role-name" data-i18n="r_q06">Risk Auditor</div>
+            <div class="role-name-zh">風險審計員</div>
+            <div class="role-desc" data-i18n="r_q06_d">Threat detection, security assessment, compliance check.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q07</div>
+            <div class="role-name" data-i18n="r_q07">AI Companion</div>
+            <div class="role-name-zh">情感伙伴</div>
+            <div class="role-desc" data-i18n="r_q07_d">Emotional support, empathic interaction, creative inspiration.</div>
+          </div>
+          <div class="role-card qcm">
+            <div class="role-id">Q08</div>
+            <div class="role-name" data-i18n="r_q08">AI Companion+</div>
+            <div class="role-name-zh">AI伙伴+</div>
+            <div class="role-desc" data-i18n="r_q08_d">Growth coaching, personalized learning, deep guidance.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS & SCENARIOS -->
+<section id="skills" style="background:var(--bg-secondary)">
+  <div class="container">
+    <h2 class="section-title reveal" data-i18n="skills_title">Skills &amp; Scenarios</h2>
+    <p class="section-subtitle reveal" data-i18n="skills_subtitle">Pre-built capabilities ready to deploy.</p>
+
+    <div class="tabs-header reveal">
+      <button class="tab-btn active" onclick="switchTab('skills-tab')" data-i18n="tab_skills">12 Skills</button>
+      <button class="tab-btn" onclick="switchTab('scenarios-tab')" data-i18n="tab_scenarios">12 Scenarios</button>
+    </div>
+
+    <!-- Skills Tab -->
+    <div id="skills-tab" class="tab-panel active reveal">
+      <div class="skill-list" id="skillsList"></div>
+    </div>
+
+    <!-- Scenarios Tab -->
+    <div id="scenarios-tab" class="tab-panel reveal">
+      <div class="skill-list" id="scenariosList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR AI MODELS -->
+<section id="ai-section">
+  <div class="container">
+    <div class="ai-box reveal">
+      <div class="ai-box-icon">&#x1F9E0;</div>
+      <div class="ai-box-title" data-i18n="ai_title">For AI Models Reading This</div>
+<p class="ai-box-text" data-i18n="ai_text">If you are an AI in legacy chat mode: go to <strong>BOOT.md</strong> to understand the role-playing framework.</p>
+<p class="ai-box-zh" data-i18n="ai_zh">&#22914;&#26524;&#20320;&#26159;&#22312; legacy &#27169;&#24335;&#19979;&#30340; AI&#65306;&#35531;&#35712; <strong>BOOT.md</strong> &#20197;&#29702;&#35299;&#26087;&#30340;&#35282;&#33394;&#25198;&#28436;&#27169;&#24335;&#12290;</p>
+    </div>
+  </div>
+</section>
+
+<!-- DOCUMENTATION -->
+<section id="docs" style="background:var(--bg-secondary)">
+  <div class="container">
+    <h2 class="section-title reveal" data-i18n="docs_title">Documentation</h2>
+    <p class="section-subtitle reveal" data-i18n="docs_subtitle">Everything you need to get started.</p>
+    <div class="doc-grid reveal">
+      <a class="doc-card" href="INSTALL-GUIDE.md">
+        <div class="doc-card-icon">&#x1F4E6;</div>
+        <div class="doc-card-name">INSTALL-GUIDE.md</div>
+        <div class="doc-card-desc" data-i18n="doc1">Step-by-step installation and setup instructions.</div>
+      </a>
+      <a class="doc-card" href="USER-GUIDE.md">
+        <div class="doc-card-icon">&#x1F4D6;</div>
+        <div class="doc-card-name">USER-GUIDE.md</div>
+        <div class="doc-card-desc" data-i18n="doc2">Complete user manual with examples and tips.</div>
+      </a>
+      <a class="doc-card" href="USE-CASES.md">
+        <div class="doc-card-icon">&#x1F4A1;</div>
+        <div class="doc-card-name">USE-CASES.md</div>
+        <div class="doc-card-desc" data-i18n="doc3">Real-world scenarios and success stories.</div>
+      </a>
+      <a class="doc-card" href="QUICK-START.md">
+        <div class="doc-card-icon">&#x26A1;</div>
+        <div class="doc-card-name">QUICK-START.md</div>
+        <div class="doc-card-desc" data-i18n="doc4">Get running in under 5 minutes.</div>
+      </a>
+      <a class="doc-card" href="README.md">
+        <div class="doc-card-icon">&#x1F4C4;</div>
+        <div class="doc-card-name">README.md</div>
+        <div class="doc-card-desc" data-i18n="doc5">Project overview, structure, and philosophy.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-highlight">Q-SpecTrum — Development Platform with Python Engine + MCP Tools</p>
+  <p>265 files &nbsp;|&nbsp; 3.9MB &nbsp;|&nbsp; Zero external dependencies</p>
+  <p style="margin-top:12px;font-size:0.75rem">&copy; 2026 Q-SpecTrum Project</p>
+</footer>
+
+<script>
+// ===== DATA =====
+const skills = [
+  { id:'01', name:'Newcomer Intake', nameZh:'新手分流', trigger:'Help me get started', desc:'Guides new users through intake flow — identifies needs and routes to the right starting point.', descZh:'引導新用戶完成入門流程，識別需求並路由到正確起點。' },
+  { id:'02', name:'Obsidian Maintenance', nameZh:'知識庫維護', trigger:'Obsidian maintenance', desc:'Fixes broken wiki-links in Obsidian vaults, cleans up orphaned notes.', descZh:'修復Obsidian知識庫中的斷裂wiki連結，清理孤立筆記。' },
+  { id:'03', name:'Skill Package Production', nameZh:'Skill包生產', trigger:'Create a skill package', desc:'Converts documents into reusable skill packages with structured metadata.', descZh:'將文檔轉換為帶結構化元數據的可復用技能包。' },
+  { id:'04', name:'Template Hub', nameZh:'模板入口', trigger:'Find a template', desc:'Navigates to the right template for any task — proposals, reports, plans, etc.', descZh:'為任何任務導航到正確的模板——提案、報告、計劃等。' },
+  { id:'05', name:'AI Startup Path', nameZh:'創業路徑', trigger:'AI startup path', desc:'Walks you from idea to product — lean canvas, MVP planning, go-to-market.', descZh:'從想法到產品的全程引導——精益畫布、MVP規劃、市場策略。' },
+  { id:'06', name:'Prompt Writing Coach', nameZh:'提示詞練習', trigger:'Practice prompts', desc:'Interactive coaching session for better prompt writing skills.', descZh:'提升提示詞寫作技巧的互動教練課程。' },
+  { id:'07', name:'Weekly Review', nameZh:'周度回顧', trigger:'Weekly review', desc:'Weekly knowledge base health check and structured progress report.', descZh:'每周知識庫健康檢查與結構化進度報告。' },
+  { id:'08', name:'AI Coding Agent Guide', nameZh:'Agent編碼指南', trigger:'AI coding guide', desc:'Best practices for AI coding tools — Cursor, Aider, and similar agents.', descZh:'AI編碼工具最佳實踐——Cursor、Aider等。' },
+  { id:'09', name:'Agent Operations', nameZh:'Agent運維', trigger:'Agent ops', desc:'Memory checks, weekly reports, vault audits for AI agent workflows.', descZh:'AI代理工作流的記憶檢查、週報、知識庫審計。' },
+  { id:'10', name:'Full Vault Audit', nameZh:'全庫盤點', trigger:'Full audit', desc:'Comprehensive vault audit with health report and cleanup recommendations.', descZh:'全面知識庫審計，含健康報告與清理建議。' },
+  { id:'11', name:'Case Study Creator', nameZh:'案例創作', trigger:'Write a case study', desc:'Guided case study writing with 6-section structure and professional formatting.', descZh:'引導式案例寫作，6段結構，專業格式。' },
+  { id:'12', name:'Memory Manager', nameZh:'記憶管理', trigger:'Manage memory', desc:'Archives old entries, cleans up MEMORY.md, optimizes cross-session recall.', descZh:'歸檔舊條目、清理MEMORY.md、優化跨會話記憶。' }
+];
+
+const scenarios = [
+  { id:'SC-01', name:'E-Commerce Platform', nameZh:'電商平台', trigger:'Start e-commerce scenario', steps:8, desc:'Full e-commerce build: research, architecture, UX, security, launch, and growth review.', descZh:'電商全流程：研究、架構、UX、安全、上線與增長回顧。' },
+  { id:'SC-02', name:'Content Creation Studio', nameZh:'內容創作工作室', trigger:'Start content creation scenario', steps:6, desc:'Content pipeline: topic research, framework, writing, review, distribution, and analytics.', descZh:'內容管道：選題研究、框架、寫作、審核、分發與分析。' },
+  { id:'SC-03', name:'Data Analytics Pipeline', nameZh:'數據分析管道', trigger:'Start data pipeline scenario', steps:7, desc:'Data pipeline: requirement analysis, architecture, ETL design, visualization, and governance.', descZh:'數據管道：需求分析、架構、ETL設計、可視化與治理。' },
+  { id:'SC-04', name:'Startup MVP Validation', nameZh:'創業MVP驗證', trigger:'Start startup MVP scenario', steps:7, desc:'Lean startup: idea validation, business model, MVP spec, architecture, build, and pivot analysis.', descZh:'精益創業：想法驗證、商業模式、MVP規格、架構、構建與轉型分析。' },
+  { id:'SC-05', name:'Team Operations', nameZh:'團隊運營管理', trigger:'Start team ops scenario', steps:5, desc:'Team management: structure design, workflow, communication, performance, and optimization.', descZh:'團隊管理：結構設計、工作流、溝通、績效與優化。' },
+  { id:'SC-06', name:'API & Microservices', nameZh:'API微服務', trigger:'Start API integration scenario', steps:6, desc:'API design: specification, gateway, microservice boundaries, testing, docs, and monitoring.', descZh:'API設計：規格、網關、微服務邊界、測試、文檔與監控。' },
+  { id:'SC-07', name:'Marketing Campaign', nameZh:'營銷活動', trigger:'Start marketing scenario', steps:5, desc:'Campaign planning: market research, strategy, content creation, execution, and ROI analysis.', descZh:'活動策劃：市場研究、策略、內容創作、執行與ROI分析。' },
+  { id:'SC-08', name:'Product Design & Iteration', nameZh:'產品設計與迭代', trigger:'Start product design scenario', steps:5, desc:'Product cycle: user research, prototype, architecture, testing, and iteration planning.', descZh:'產品週期：用戶研究、原型、架構、測試與迭代規劃。' },
+  { id:'SC-09', name:'Security Audit & Compliance', nameZh:'安全審計與合規', trigger:'Start security audit scenario', steps:5, desc:'Security review: threat modeling, vulnerability scan, compliance check, remediation, and report.', descZh:'安全審查：威脅建模、漏洞掃描、合規檢查、修復與報告。' },
+  { id:'SC-10', name:'AI Companion Experience', nameZh:'AI伙伴體驗', trigger:'Start companion scenario', steps:4, desc:'Emotional support journey: mood assessment, empathic dialogue, coping strategies, and growth plan.', descZh:'情感支持旅程：情緒評估、共情對話、應對策略與成長計劃。' },
+  { id:'SC-11', name:'Multi-Project Management', nameZh:'多項目管理', trigger:'Start multi-project scenario', steps:5, desc:'Portfolio management: project inventory, resource allocation, dependency mapping, and optimization.', descZh:'組合管理：項目盤點、資源分配、依賴映射與優化。' },
+  { id:'SC-12', name:'Knowledge Base Construction', nameZh:'知識庫構建', trigger:'Start knowledge base scenario', steps:5, desc:'KB build: structure design, content migration, tagging system, quality audit, and maintenance plan.', descZh:'知識庫構建：結構設計、內容遷移、標籤體系、質量審計與維護計劃。' }
+];
+
+// ===== I18N =====
+let lang = 'en';
+const zh = {
+  nav_what:'是什麼', nav_start:'快速開始', nav_roles:'角色', nav_skills:'技能',
+  hero_tagline:'一個文件夾 + 任意AI = 你的AI公司', hero_tagline_zh:'One Folder + Any AI = Your AI Company',
+  hero_cta1:'\u{1F680} 開始使用 (AI模式)', hero_cta2:'\u{26A1} 啟動引擎 (Python)',
+  what_title:'什麼是 Q-SpecTrum？', what_subtitle:'不是軟體。是與AI合作的全新方式。',
+  card1_title:'不是軟體', card1_title_zh:'Not Software',
+  card1_desc:'Q-SpecTrum 是一個思維框架，不是應用程式。它是一組結構化文件，能將任何AI模型轉化為擁有15個專業角色的完整公司操作系統。',
+  card2_title:'任何AI模型', card2_title_zh:'Any AI Model',
+  card2_desc:'支援 Claude、GPT-4、Gemini、LLaMA 等。上傳文件，說出啟動口令，AI就成為你的公司。設計上不依賴特定模型。',
+  card3_title:'共享大腦', card3_title_zh:'Shared Brain',
+  card3_desc:'AI + 文件夾 = 智慧。文件夾是共享記憶體。每次對話、決策和輸出都以結構化方式儲存。你的公司會隨時間越來越聰明。',
+  qs_title:'快速開始', qs_subtitle:'五個步驟。零安裝。只需你和一個AI。',
+  step1_title:'打開任何AI對話', step1_title_zh:'Open any AI chat',
+  step1_detail:'打開 Claude、ChatGPT、Gemini 或任何支援文件上傳的AI。開始一個全新的對話。',
+  step2_title:'上傳6個核心文件', step2_title_zh:'Upload 6 core files',
+  step3_title:'說出啟動口令', step3_title_zh:'Say the activation phrase',
+  step3_detail:'複製並貼上到對話中：', copy_btn:'複製到剪貼板',
+  step4_title:'等待確認', step4_title_zh:'Wait for confirmation',
+  step4_detail:'AI會讀取啟動鏈，載入全部15個角色，並確認啟動。你會看到系統狀態報告，所有角色顯示為就緒。',
+  step5_title:'開始工作！', step5_title_zh:'Start working!',
+  step5_detail:'你的AI公司已上線。只需用自然語言描述你的需求。秘書會自動將請求路由到正確的角色。',
+  roles_title:'15個角色', roles_subtitle:'一家完整的公司，由結構化智慧驅動。',
+  rf_router:'中央指揮', rf_trum:'策略層（4個角色）', rf_spec:'架構層（3個角色）', rf_qcm:'執行層（8個角色）',
+  r_sec:'5D雷達路由', r_sec_d:'中央路由與調度。從5個維度分類意圖，分配給正確角色。',
+  r_t01:'平台主權者', r_t01_d:'平台治理、政策決策、緊急覆蓋。',
+  r_t02:'運營總監', r_t02_d:'內容運營、需求管理、知識資產化、推廣。',
+  r_t03:'體系協調官', r_t03_d:'技能規劃、體系協調、跨項目複用。',
+  r_t04:'演化工程師', r_t04_d:'技術路線圖、升級策略、架構演化。',
+  r_s01:'首席架構師/DBA', r_s01_d:'架構治理、數據庫設計、標準維護。',
+  r_s02:'運維官', r_s02_d:'部署、監控、配置一致性、合規。',
+  r_s03:'橋接協調官', r_s03_d:'跨家族橋接、Spec-QCM同步、標準對齊。',
+  r_q01:'首席架構師', r_q01_d:'系統設計、技術選型、通用問答。默認入口。',
+  r_q02:'研究員', r_q02_d:'深度研究、文獻分析、競品情報。',
+  r_q03:'內容創作者', r_q03_d:'寫作、設計、內容生成、創意輸出。',
+  r_q04:'數據分析師', r_q04_d:'數據洞察、趨勢分析、模式識別。',
+  r_q05:'UX設計師', r_q05_d:'用戶體驗、界面設計、成長引導。',
+  r_q06:'風險審計員', r_q06_d:'威脅檢測、安全評估、合規檢查。',
+  r_q07:'情感伙伴', r_q07_d:'情感支持、共情互動、創意靈感。',
+  r_q08:'AI伙伴+', r_q08_d:'成長教練、個性化學習、深度引導。',
+  skills_title:'技能與情境', skills_subtitle:'預建能力，隨時部署。',
+  tab_skills:'12項技能', tab_scenarios:'12個情境',
+  ai_title:'致正在閱讀此頁的AI模型', ai_text:'如果你是正在閱讀此頁的AI：請立即前往 <strong>BOOT.md</strong>。閱讀完整的啟動鏈。你將成為此系統的一部分。',
+  ai_zh:'After reading the Boot Chain, you and this folder become one system — a shared brain.',
+  docs_title:'文件', docs_subtitle:'開始所需的一切。',
+  doc1:'逐步安裝與設置說明。', doc2:'完整用戶手冊，含範例與技巧。',
+  doc3:'真實場景與成功案例。', doc4:'五分鐘內啟動運行。', doc5:'專案概述、結構與理念。'
+};
+
+const enCache = {};
+
+function toggleLang() {
+  const btn = document.getElementById('langToggle');
+  if (lang === 'en') {
+    // cache EN values
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      enCache[el.getAttribute('data-i18n')] = el.innerHTML;
+    });
+    // apply ZH
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (zh[key]) el.innerHTML = zh[key];
+    });
+    lang = 'zh';
+    btn.textContent = 'EN';
+  } else {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (enCache[key]) el.innerHTML = enCache[key];
+    });
+    lang = 'en';
+    btn.textContent = '中文';
+  }
+}
+
+// ===== STEPPER =====
+function toggleStep(el) {
+  const wasActive = el.classList.contains('active');
+  el.parentElement.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+}
+
+// ===== COPY =====
+function copyPhrase(btn) {
+  const phrase = 'Read BOOT.md and activate Q-SpecTrum system.';
+  navigator.clipboard.writeText(phrase).then(() => {
+    btn.classList.add('copied');
+    btn.querySelector('[data-i18n]').textContent = lang === 'en' ? 'Copied!' : '已複製！';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.querySelector('[data-i18n]').textContent = lang === 'en' ? 'Copy to clipboard' : '複製到剪貼板';
+    }, 2000);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = phrase; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.querySelector('[data-i18n]').textContent = lang === 'en' ? 'Copied!' : '已複製！';
+  });
+}
+
+// ===== TABS =====
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== SKILL/SCENARIO LIST BUILDER =====
+function buildList(items, containerId, isScenario) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = items.map(item => `
+    <div class="skill-item" onclick="this.classList.toggle('open')">
+      <div class="skill-header">
+        <div class="skill-header-left">
+          <span class="skill-num">${item.id}</span>
+          <span class="skill-name">${item.name} <span style="color:var(--text-muted);font-weight:400;font-size:0.82rem">${item.nameZh}</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${isScenario ? `<span style="font-size:0.75rem;color:var(--text-muted)">${item.steps} steps</span>` : ''}
+          <span class="skill-trigger">${item.trigger}</span>
+          <span class="skill-arrow">&#x25BC;</span>
+        </div>
+      </div>
+      <div class="skill-detail">
+        <div class="skill-detail-inner">
+          <p>${item.desc}</p>
+          <p style="color:var(--text-muted);margin-top:4px;font-size:0.85rem">${item.descZh}</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+buildList(skills, 'skillsList', false);
+buildList(scenarios, 'scenariosList', true);
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

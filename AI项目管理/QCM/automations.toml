@@ -1,0 +1,88 @@
+# Q-SpecTrum 自动化配置
+# 版本: V1.0 | 2026-04-21
+
+# === 自检自动化 ===
+[[automation]]
+id = "self_check_daily"
+name = "每日自检"
+description = "每日核心文件状态检查"
+schedule = "DAILY 09:00"
+status = "ACTIVE"
+last_run = "2026-04-21"
+
+[[automation.task]]
+type = "scan"
+target = ["根目录", "AI项目管理"]
+
+[[automation.task]]
+type = "check"
+target = "MEMORY.md"
+
+[[automation.task]]
+type = "update"
+target = "能力评分"
+
+# === 飞轮迭代自动化 ===
+[[automation]]
+id = "flywheel_daily"
+name = "每日飞轮迭代"
+description = "每日飞轮6阶段执行"
+schedule = "DAILY 09:05"
+status = "ACTIVE"
+last_run = "2026-04-21"
+
+[[automation.task]]
+type = "flywheel"
+stages = ["scan", "diagnose", "plan", "execute", "validate", "crystallize"]
+
+# === 收件箱扫描 ===
+[[automation]]
+id = "inbox_scan"
+name = "收件箱扫描"
+description = "检查待处理任务"
+schedule = "DAILY 08:55"
+status = "STANDBY"
+last_run = null
+
+# === 周报自动化 ===
+[[automation]]
+id = "weekly_report"
+name = "周报生成"
+description = "每周进化报告"
+schedule = "WEEKLY MON 09:00"
+status = "STANDBY"
+last_run = null
+
+---
+
+## 自检清单 (用于手动触发)
+
+### 每日自检命令
+```
+1. 扫描核心目录状态
+2. 检查MEMORY.md更新
+3. 验证飞轮迭代进度
+4. 更新能力评分
+5. 记录待办任务
+```
+
+### 周自检命令
+```
+1. 执行每日自检全部项目
+2. 生成周进化报告
+3. 评估能力评分趋势
+4. 规划下周迭代
+```
+
+---
+
+## 优先级规则
+
+| 自动化 | 优先级 | 触发条件 |
+|--------|--------|----------|
+| self_check_daily | P1 | 每日09:00 |
+| flywheel_daily | P1 | 每日09:05 |
+| inbox_scan | P2 | 每日08:55 |
+| weekly_report | P2 | 每周一09:00 |
+
+*自动化配置 V1.0 | Q-SpecTrum*

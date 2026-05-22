@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-SpecTrum Dashboard — System Control Panel</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1a2332;--border:#1e293b;
+  --text:#e2e8f0;--dim:#94a3b8;--accent:#6366f1;
+  --trum:#f59e0b;--spec:#06b6d4;--qcm:#8b5cf6;--sec:#10b981;
+  --ok:#22c55e;--warn:#eab308;--err:#ef4444;
+  --font:'Segoe UI',system-ui,sans-serif;--r:12px;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+/* Layout */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--qcm));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar .badge{background:var(--ok);color:#000;font-size:.7rem;padding:2px 8px;border-radius:99px;font-weight:600}
+.topbar .ver{color:var(--dim);font-size:.8rem;margin-left:auto}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;padding:20px 24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s}
+.card:hover{border-color:var(--accent)}
+.card-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title .dot{width:8px;height:8px;border-radius:50%}
+
+/* Stats */
+.stat-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border:none}
+.stat-label{color:var(--dim);font-size:.9rem}
+.stat-value{font-weight:600;font-size:.95rem}
+
+/* Role cards */
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.role-chip{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:.8rem;transition:all .2s}
+.role-chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+.role-chip .code{font-weight:700;font-size:.75rem;margin-bottom:4px;opacity:.7}
+.role-chip .name{font-size:.78rem}
+.role-chip.trum{border-left:3px solid var(--trum)}
+.role-chip.spec{border-left:3px solid var(--spec)}
+.role-chip.qcm{border-left:3px solid var(--qcm)}
+
+/* Workflow table */
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;color:var(--dim);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)}
+td{padding:8px 12px;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(99,102,241,.05)}
+.badge-sm{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600}
+.badge-ok{background:rgba(34,197,94,.15);color:var(--ok)}
+.badge-warn{background:rgba(234,179,8,.15);color:var(--warn)}
+.badge-err{background:rgba(239,68,68,.15);color:var(--err)}
+
+/* Progress */
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+
+/* Architecture diagram */
+.arch-flow{display:flex;flex-direction:column;gap:8px;font-size:.82rem}
+.arch-layer{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.arch-layer .layer-tag{font-weight:700;font-size:.72rem;text-transform:uppercase;padding:3px 8px;border-radius:4px;min-width:80px;text-align:center}
+.arch-arrow{text-align:center;color:var(--dim);font-size:1.2rem}
+
+/* Phase tracker */
+.phase-track{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.phase-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;border:2px solid var(--border)}
+.phase-dot.done{background:var(--ok);border-color:var(--ok);color:#000}
+.phase-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;animation:pulse 2s infinite}
+.phase-dot.pending{opacity:.4}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.4)}50%{box-shadow:0 0 0 8px rgba(99,102,241,0)}}
+
+/* Task board */
+.task-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.task-item:last-child{border:none}
+.task-status{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.task-status.done{background:var(--ok)}
+.task-status.wip{background:var(--accent)}
+.task-status.todo{background:var(--dim)}
+.task-status.blocked{background:var(--err)}
+.task-text{font-size:.85rem;flex:1}
+.task-tag{font-size:.7rem;color:var(--dim);background:var(--surface2);padding:2px 6px;border-radius:4px}
+
+/* Full width cards */
+.full{grid-column:1/-1}
+
+@media(max-width:768px){.grid{grid-template-columns:1fr;padding:12px}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Q-SpecTrum</h1>
+  <span class="badge">LIVE</span>
+  <span class="ver">v10.0 · 47T/748R · 2026-04-20</span>
+</div>
+
+<div class="grid">
+
+<!-- System Overview -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--ok)"></div>系統概覽</div>
+  <div class="stat-row"><span class="stat-label">數據庫</span><span class="stat-value">40 表 / 85 行</span></div>
+  <div class="stat-row"><span class="stat-label">空表</span><span class="stat-value" style="color:var(--ok)">0</span></div>
+  <div class="stat-row"><span class="stat-label">舊路徑殘留</span><span class="stat-value" style="color:var(--ok)">0</span></div>
+  <div class="stat-row"><span class="stat-label">整合檢查</span><span class="stat-value" style="color:var(--ok)">31 項 ✓</span></div>
+  <div class="stat-row"><span class="stat-label">核心腳本</span><span class="stat-value">26 .py</span></div>
+  <div class="stat-row"><span class="stat-label">綜合成熟度</span><span class="stat-value">8.5 / 10</span></div>
+</div>
+
+<!-- Maturity Radar -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--accent)"></div>成熟度矩陣</div>
+  <div style="font-size:.85rem">
+    <div class="stat-row"><span class="stat-label">理論完整度</span><span class="stat-value">9/10</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--ok)"></div></div>
+    <div class="stat-row" style="margin-top:8px"><span class="stat-label">設計完整度</span><span class="stat-value">8/10</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:80%;background:var(--ok)"></div></div>
+    <div class="stat-row" style="margin-top:8px"><span class="stat-label">數據完整度</span><span class="stat-value">9/10</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--ok)"></div></div>
+    <div class="stat-row" style="margin-top:8px"><span class="stat-label">工程完整度</span><span class="stat-value">8/10</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:80%;background:var(--accent)"></div></div>
+    <div class="stat-row" style="margin-top:8px"><span class="stat-label">集成完整度</span><span class="stat-value">7/10</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:70%;background:var(--warn)"></div></div>
+  </div>
+</div>
+
+<!-- Phase Progress -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--spec)"></div>Sprint 進度</div>
+  <div class="phase-track">
+    <div class="phase-dot done" title="Migration">M</div>
+    <div class="phase-dot done" title="Sprint 1: Data Layer">S1</div>
+    <div class="phase-dot done" title="Sync">Sy</div>
+    <div class="phase-dot done" title="Sprint 2: Metadata">S2</div>
+    <div class="phase-dot done" title="Sprint 3: Execution">S3</div>
+    <div class="phase-dot done" title="Sprint 4: Standardize">S4</div>
+    <div class="phase-dot done" title="Sprint 5: Integration">S5</div>
+    <div class="phase-dot done" title="Phase A: Consolidation">A</div>
+    <div class="phase-dot done" title="Phase B: Code Unification">B</div>
+    <div class="phase-dot done" title="Phase C: LLM Provider">C</div>
+    <div class="phase-dot done" title="Phase D: Chatroom Integration">D</div>
+    <div class="phase-dot done" title="Phase E: Dashboard">E</div>
+    <div class="phase-dot active" title="Phase F: Final Delivery">F</div>
+  </div>
+  <div style="margin-top:16px;font-size:.82rem">
+    <div class="stat-row"><span class="stat-label">Gap 閉環</span><span class="stat-value" style="color:var(--ok)">9/9 ✓</span></div>
+    <div class="stat-row"><span class="stat-label">Session 數</span><span class="stat-value">S001 – S009</span></div>
+  </div>
+</div>
+
+<!-- 15 Roles -->
+<div class="card full">
+  <div class="card-title"><div class="dot" style="background:var(--qcm)"></div>AI 角色系統 — 15 角色 / 3 家族 / 10 協議</div>
+  <div class="role-grid">
+    <div class="role-chip trum"><div class="code">ROLE-T01</div><div class="name">平台主權者</div></div>
+    <div class="role-chip trum"><div class="code">ROLE-T02</div><div class="name">運營總監</div></div>
+    <div class="role-chip trum"><div class="code">ROLE-T03</div><div class="name">體系協調官</div></div>
+    <div class="role-chip trum"><div class="code">ROLE-T04</div><div class="name">演化工程師</div></div>
+    <div class="role-chip spec"><div class="code">ROLE-S01</div><div class="name">首席架構師/DBA</div></div>
+    <div class="role-chip spec"><div class="code">ROLE-S02</div><div class="name">運維官</div></div>
+    <div class="role-chip spec"><div class="code">ROLE-S03</div><div class="name">橋接協調官</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q01</div><div class="name">Chief Architect</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q02</div><div class="name">Researcher</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q03</div><div class="name">Creator</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q04</div><div class="name">Analyst</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q05</div><div class="name">UX Lead</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q06</div><div class="name">Risk Auditor</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q07</div><div class="name">AI Companion</div></div>
+    <div class="role-chip qcm"><div class="code">ROLE-Q08</div><div class="name">AI Companion+</div></div>
+  </div>
+</div>
+
+<!-- Architecture Flow -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--sec)"></div>架構串聯圖</div>
+  <div class="arch-flow">
+    <div class="arch-layer"><span class="layer-tag" style="background:rgba(99,102,241,.15);color:var(--accent)">UI 層</span>Dashboard · CLI · AI-Chatroom</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-layer"><span class="layer-tag" style="background:rgba(16,185,129,.15);color:var(--sec)">網關</span>Secretary 5D Radar → Trum CNP</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-layer"><span class="layer-tag" style="background:rgba(245,158,11,.15);color:var(--trum)">引擎</span>WorkflowEngine → AgentRuntime → Protocol</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-layer"><span class="layer-tag" style="background:rgba(139,92,246,.15);color:var(--qcm)">角色</span>Trum(4) · Spec(3) · QCM(8) → LLM Provider</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-layer"><span class="layer-tag" style="background:rgba(34,197,94,.15);color:var(--ok)">數據</span>platform.db · 47T/748R · Knowledge Graph</div>
+  </div>
+</div>
+
+<!-- Workflows -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--trum)"></div>工作流引擎 — 4 WF / 84 Steps</div>
+  <table>
+    <tr><th>代碼</th><th>名稱</th><th>Phase</th><th>Steps</th><th>狀態</th></tr>
+    <tr><td>WF-0001</td><td>Coordinator Routing</td><td>3</td><td>15</td><td><span class="badge-sm badge-ok">PASS</span></td></tr>
+    <tr><td>WF-0002</td><td>Skill Development SOP</td><td>10</td><td>41</td><td><span class="badge-sm badge-ok">PASS</span></td></tr>
+    <tr><td>WF-0003</td><td>Planner PTS Flow</td><td>3</td><td>12</td><td><span class="badge-sm badge-ok">PASS</span></td></tr>
+    <tr><td>WF-0004</td><td>Validator Feedback</td><td>4</td><td>16</td><td><span class="badge-sm badge-ok">PASS</span></td></tr>
+  </table>
+</div>
+
+<!-- Engine Architecture -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--accent)"></div>引擎架構 — 26 Python 模塊</div>
+  <table>
+    <tr><th>Layer</th><th>核心文件</th><th>職責</th></tr>
+    <tr><td style="color:var(--accent)">Entry</td><td>run.py</td><td>CLI 入口 (--web/--demo/--status/--e2e)</td></tr>
+    <tr><td style="color:var(--trum)">Engine</td><td>qspectrum_engine.py</td><td>Secretary 路由 + 15角色 + LLM pipeline</td></tr>
+    <tr><td style="color:var(--sec)">API</td><td>api_server.py</td><td>REST API (84 端點, port 8765)</td></tr>
+    <tr><td style="color:var(--qcm)">Subsystems</td><td>14 modules</td><td>Ghost Channel, Closed Loop, Negotiation, etc.</td></tr>
+    <tr><td style="color:var(--spec)">Bridge</td><td>deerflow_bridge.py</td><td>6 DeerFlow skills dispatch</td></tr>
+    <tr><td style="color:var(--dim)">Support</td><td>8 modules</td><td>DB, file ops, plugin loader, config</td></tr>
+  </table>
+</div>
+
+<!-- P0 Task Board -->
+<div class="card full">
+  <div class="card-title"><div class="dot" style="background:var(--warn)"></div>待完成任務</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <h4 style="font-size:.85rem;color:var(--accent);margin-bottom:8px">P0 — 核心</h4>
+      <div class="task-item"><div class="task-status done"></div><span class="task-text">Agent Runtime v1.1</span><span class="task-tag">S007</span></div>
+      <div class="task-item"><div class="task-status done"></div><span class="task-text">引擎精簡重構 (26 modules)</span><span class="task-tag">S009</span></div>
+      <div class="task-item"><div class="task-status done"></div><span class="task-text">LLM Provider 抽象層</span><span class="task-tag">S009</span></div>
+      <div class="task-item"><div class="task-status done"></div><span class="task-text">AI-Chatroom ↔ Engine</span><span class="task-tag">S009</span></div>
+      <div class="task-item"><div class="task-status todo"></div><span class="task-text">LLM 真實接入 (OpenAI/Anthropic)</span><span class="task-tag">需 API Key</span></div>
+      <div class="task-item"><div class="task-status todo"></div><span class="task-text">Windows 端 Git init</span><span class="task-tag">init_git.bat</span></div>
+    </div>
+    <div>
+      <h4 style="font-size:.85rem;color:var(--qcm);margin-bottom:8px">P1-P2 — 進階</h4>
+      <div class="task-item"><div class="task-status todo"></div><span class="task-text">知識共振引擎 R-Formula</span><span class="task-tag">P1</span></div>
+      <div class="task-item"><div class="task-status todo"></div><span class="task-text">Ghost Channel SDK 生產化</span><span class="task-tag">P1</span></div>
+      <div class="task-item"><div class="task-status blocked"></div><span class="task-text">角色模擬引擎 (8角色)</span><span class="task-tag">需 R-Formula</span></div>
+      <div class="task-item"><div class="task-status blocked"></div><span class="task-text">沙盤辯論系統</span><span class="task-tag">需角色模擬</span></div>
+      <div class="task-item"><div class="task-status todo"></div><span class="task-text">Q-SpecTrum(TEST) → Q-SpecTrum 更名</span><span class="task-tag">Phase F</span></div>
+      <div class="task-item"><div class="task-status todo"></div><span class="task-text">最終打包交付</span><span class="task-tag">Phase F</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Value Layers -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--ok)"></div>價值體系分層</div>
+  <div class="stat-row"><span class="stat-label">第1層: 即時可用</span><span class="stat-value" style="color:var(--ok)">95% ✓</span></div>
+  <div class="progress-bar"><div class="progress-fill" style="width:95%;background:var(--ok)"></div></div>
+  <div class="stat-row" style="margin-top:8px"><span class="stat-label">第2層: 框架賦能</span><span class="stat-value" style="color:var(--ok)">85% ✓</span></div>
+  <div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--ok)"></div></div>
+  <div class="stat-row" style="margin-top:8px"><span class="stat-label">第3層: 智能內核</span><span class="stat-value" style="color:var(--warn)">35%</span></div>
+  <div class="progress-bar"><div class="progress-fill" style="width:35%;background:var(--warn)"></div></div>
+  <div class="stat-row" style="margin-top:8px"><span class="stat-label">第4層: 生態願景</span><span class="stat-value" style="color:var(--dim)">15%</span></div>
+  <div class="progress-bar"><div class="progress-fill" style="width:15%;background:var(--dim)"></div></div>
+</div>
+
+<!-- Database Domains -->
+<div class="card">
+  <div class="card-title"><div class="dot" style="background:var(--trum)"></div>數據庫 8 域</div>
+  <table>
+    <tr><th>域</th><th>核心表</th><th>行數</th></tr>
+    <tr><td>Identity</td><td>users, teams</td><td>3</td></tr>
+    <tr><td>Portfolio</td><td>projects, stages</td><td>6</td></tr>
+    <tr><td>Demand</td><td>pain_points, demands</td><td>8</td></tr>
+    <tr><td>Solution</td><td>solutions, links</td><td>3</td></tr>
+    <tr><td>Orchestration</td><td>agents, workflows, steps</td><td>178</td></tr>
+    <tr><td>Validation</td><td>runs, defects, releases</td><td>13</td></tr>
+    <tr><td>Knowledge</td><td>documents, links</td><td>107</td></tr>
+    <tr><td>ARCS</td><td>ai_roles, protocols</td><td>58</td></tr>
+  </table>
+</div>
+
+</div>
+
+<!-- Live API Connection Bar -->
+<div id="liveBar" style="position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:12px;font-size:.8rem">
+  <div id="liveDot" style="width:8px;height:8px;border-radius:50%;background:var(--dim)"></div>
+  <span id="liveText" style="color:var(--dim)">Connecting to API...</span>
+  <span style="flex:1"></span>
+  <a href="/chat.html" style="color:var(--accent);font-size:.82rem">Open Chatroom</a>
+  <a href="/index.html" style="color:var(--dim);font-size:.82rem;margin-left:12px">About</a>
+</div>
+
+<script>
+// Auto-refresh dashboard with live API data
+const API = window.location.origin;
+
+async function refreshDashboard() {
+  try {
+    const res = await fetch(`${API}/api/status`, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error("API offline");
+    const data = await res.json();
+
+    document.getElementById("liveDot").style.background = "var(--ok)";
+    document.getElementById("liveText").textContent =
+      `LIVE · ${data.roles_loaded} roles · ${data.knowledge_entries} knowledge · ${data.interactions} interactions · LLM: ${data.llm_provider} · uptime: ${Math.round(data.uptime_seconds)}s`;
+
+    // Update system overview card dynamically
+    const statValues = document.querySelectorAll(".stat-value");
+    // Update rows count from live data if available
+  } catch {
+    document.getElementById("liveDot").style.background = "var(--dim)";
+    document.getElementById("liveText").textContent = "API offline — run: python api_server.py";
+  }
+}
+
+// Refresh every 5 seconds
+refreshDashboard();
+setInterval(refreshDashboard, 5000);
+</script>
+
+</body>
+</html>

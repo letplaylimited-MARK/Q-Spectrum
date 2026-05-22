@@ -1,0 +1,4 @@
+-- SQLite requires no extensions.
+-- UUID generation uses hex(randomblob()) in DEFAULT clauses.
+-- Case-insensitive comparison uses COLLATE NOCASE.
+-- This file is a placeholder for compatibility with the bootstrap script.

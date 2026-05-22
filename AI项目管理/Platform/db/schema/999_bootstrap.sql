@@ -1,0 +1,30 @@
+-- Bootstrap script for Q-SpecTrum SQLite database
+-- ================================================
+-- Execute all schema files in order using sqlite3 CLI:
+--
+--   sqlite3 platform.db < 001_extensions.sql
+--   sqlite3 platform.db < 010_identity.sql
+--   sqlite3 platform.db < 020_portfolio.sql
+--   sqlite3 platform.db < 030_demand.sql
+--   sqlite3 platform.db < 040_solution.sql
+--   sqlite3 platform.db < 050_orchestration.sql
+--   sqlite3 platform.db < 060_validation.sql
+--   sqlite3 platform.db < 070_knowledge.sql
+--   sqlite3 platform.db < 080_governance.sql
+--
+-- Or inside sqlite3 interactive shell, use the .read command:
+--   .read 001_extensions.sql
+--   .read 010_identity.sql
+--   ... etc.
+--
+-- NOTE: The .read commands above are sqlite3 CLI meta-commands,
+-- not valid SQL. Run them only inside the sqlite3 shell, not via executescript().
+
+-- This file is an instruction reference only.
+-- For programmatic bootstrap, use Python:
+--
+--   import sqlite3, glob
+--   conn = sqlite3.connect('platform.db')
+--   for f in sorted(glob.glob('0*.sql') + glob.glob('08*.sql')):
+--       conn.executescript(open(f).read())
+--   conn.close()

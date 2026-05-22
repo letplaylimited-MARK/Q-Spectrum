@@ -1,0 +1,35 @@
+# Auto-detect text files — normalize to LF on commit, convert to native on checkout
+* text=auto
+
+# Batch files must stay CRLF on Windows
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# SQLite databases — binary, never diff or merge
+*.db binary
+*.db-wal binary
+*.db-shm binary
+*.db-journal binary
+*.sqlite binary
+*.sqlite3 binary
+
+# Archives — binary
+*.tar.gz binary
+*.gz binary
+*.zip binary
+
+# Keys and secrets — binary
+.ghost_channel_key binary
+.ghost_channel_state.json binary
+
+# Images — binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Git files — text
+.gitattributes text
+.gitignore text
