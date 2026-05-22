@@ -56,13 +56,32 @@ Architecture:
 
 import argparse
 import json
+import logging
 import os
 import sys
 import time
+import uuid
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlparse
+
+# Configure logging
+_logger = logging.getLogger("qspectrum")
+_log_json = os.environ.get("QSPECTRUM_LOG_FORMAT", "").lower() == "json"
+if _log_json:
+    _handler = logging.StreamHandler(sys.stderr)
+    _handler.setFormatter(logging.Formatter(
+        json.dumps({
+            "ts": "%(asctime)s", "level": "%(levelname)s",
+            "logger": "%(name)s", "msg": "%(message)s"
+        })))
+    _logger.addHandler(_handler)
+    _logger.setLevel(logging.INFO)
+else:
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+
+logger = logging.getLogger("qspectrum.api")
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -95,6 +114,10 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
     _cors_origin = os.environ.get("QSPECTRUM_CORS_ORIGIN", "")  # Empty = same-origin only
     _active_requests = 0  # Track concurrent requests
     _max_concurrent = int(os.environ.get("QSPECTRUM_MAX_CONCURRENT", "8"))  # Concurrency limit
+    # Optional API authentication (env: QSPECTRUM_API_TOKEN)
+    # When set, all /api/* endpoints require Authorization: Bearer <token>
+    # When empty/unset, authentication is disabled (localhost tool mode)
+    _api_token = os.environ.get("QSPECTRUM_API_TOKEN", "")
 
     @staticmethod
     def _safe_int(value, default=30, lo=1, hi=1000):
@@ -107,10 +130,14 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         from urllib.parse import unquote
+        self._request_id = uuid.uuid4().hex[:8]
         parsed = urlparse(unquote(self.path))
         path = parsed.path
 
-        # API routes
+        # API routes — enforce auth before dispatching
+        if path.startswith("/api/"):
+            if not self._check_api_auth():
+                return
         if path == "/api/status":
             self._handle_status()
         elif path == "/api/roles":
@@ -325,8 +352,14 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
             super().send_error(code, message, explain)
 
     def do_POST(self):
+        self._request_id = uuid.uuid4().hex[:8]
         parsed = urlparse(self.path)
         path = parsed.path
+
+        # All POST /api/* routes require auth when enabled
+        if path.startswith("/api/"):
+            if not self._check_api_auth():
+                return
 
         if path == "/api/chat":
             self._handle_chat()
@@ -403,6 +436,24 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
         self.send_response(200)
         self._add_cors_headers()
         self.end_headers()
+
+    def _check_api_auth(self):
+        """Verify optional Bearer token authentication.
+
+        Returns True if request is authorized, False otherwise.
+        When QSPECTRUM_API_TOKEN is not set, always returns True (localhost mode).
+        When set, requires Authorization: Bearer <token> header matching exactly.
+        """
+        token = QSpectrumAPIHandler._api_token
+        if not token:
+            return True  # Auth disabled — localhost tool mode
+        auth_header = self.headers.get("Authorization", "")
+        if auth_header == f"Bearer {token}":
+            return True
+        # Reject with 401
+        self._send_json({"error": "Authentication required",
+                         "status": "unauthorized"}, 401)
+        return False
 
     # ── API Handlers ──────────────────────────────────────
 
@@ -1752,14 +1803,22 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
         origin = self._cors_origin if self._cors_origin else (self.headers.get("Origin", ""))
         self.send_header("Access-Control-Allow-Origin", origin)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         if origin and origin != "*":
             self.send_header("Vary", "Origin")
 
     def log_message(self, format, *args):
-        """Suppress noisy access logs for static files, show API calls."""
-        if "/api/" in str(args[0]) if args else False:
-            super().log_message(format, *args)
+        """Structured logging: suppress static file noise, log API calls with request ID."""
+        path = str(args[0]) if args else ""
+        if "/api/" in path:
+            req_id = getattr(self, '_request_id', '-')
+            if _log_json:
+                logger.info(json.dumps({
+                    "event": "api_request", "request_id": req_id,
+                    "path": path, "client": self.client_address[0],
+                }))
+            else:
+                super().log_message(f"[{req_id}] " + format, *args)
 
 
 def main():
@@ -1872,6 +1931,10 @@ def main():
     print(f"  💬 Chat:   http://localhost:{args.port}/chat.html")
     print(f"  📊 Dashboard: http://localhost:{args.port}/dashboard.html")
     print(f"  📡 API:    http://localhost:{args.port}/api/status")
+    if QSpectrumAPIHandler._api_token:
+        print(f"  🔐 Auth:   Bearer token enabled (QSPECTRUM_API_TOKEN set)")
+    else:
+        print(f"  🔓 Auth:   Disabled (localhost mode — set QSPECTRUM_API_TOKEN to enable)")
     print("\n  Press Ctrl+C to stop\n")
 
     try:

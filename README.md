@@ -159,6 +159,59 @@ See [`FIXES-APPLIED.md`](FIXES-APPLIED.md) for the full record (90+ tasks, 900+ 
 
 ---
 
+## Security Features / 安全特性 (v3.0.1)
+
+| Feature | Status | Control |
+|---------|--------|---------|
+| SQL injection defense | Multi-layer | Comment/semicolon/keyword blocking in `mcp_router.py` |
+| API authentication | Optional | `QSPECTRUM_API_TOKEN` env var (disabled by default) |
+| CORS protection | Same-origin default | `QSPECTRUM_CORS_ORIGIN` env var to configure |
+| XSS protection | Active | `esc()` in `chat.html` for all dynamic HTML |
+| Key management | Env-derived | Master key from `QSPECTRUM_MASTER_SEED` or path hash |
+| HMAC persistence | File-backed | `.ghost_channel_key` survives restarts |
+| Concurrency safety | Atomic counters | Threading locks for request tracking |
+| Error isolation | Server-side only | Exception details logged, never sent to client |
+| Structured logging | Optional JSON | `QSPECTRUM_LOG_FORMAT=json` for production |
+
+**Run security validation:** `python scripts/security-check.py`
+
+---
+
+## Docker Deployment / Docker 部署
+
+```bash
+# Build
+docker build -t qspectrum .
+
+# Run (localhost mode, no auth)
+docker run -p 8765:8765 qspectrum
+
+# Run with API authentication
+docker run -p 8765:8765 -e QSPECTRUM_API_TOKEN=your-secret qspectrum
+
+# Run with CORS and structured logging
+docker run -p 8765:8765 \
+  -e QSPECTRUM_CORS_ORIGIN=https://yourapp.com \
+  -e QSPECTRUM_LOG_FORMAT=json \
+  qspectrum
+```
+
+---
+
+## Environment Variables / 环境变量
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `QSPECTRUM_PORT` | `8765` | HTTP server port |
+| `QSPECTRUM_API_TOKEN` | *(disabled)* | Bearer token for API authentication |
+| `QSPECTRUM_CORS_ORIGIN` | *(same-origin)* | Allowed CORS origin |
+| `QSPECTRUM_MAX_CONCURRENT` | `8` | Max concurrent API requests |
+| `QSPECTRUM_LOG_FORMAT` | *(human)* | Set `json` for structured logs |
+| `QSPECTRUM_MASTER_SEED` | *(path-derived)* | Seed for Ghost Channel master key |
+| `QSPECTRUM_LLM` | `mock` | LLM provider: mock/openai/anthropic/ollama |
+
+---
+
 ## Delivery Note / 交付說明
 
 Before re-distributing the folder:

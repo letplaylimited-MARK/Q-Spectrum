@@ -5,6 +5,51 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [3.0.1] — 2026-05-23
+
+Round 2 + Round 3 deep polishing. Security hardening, production features, containerization.
+
+### Security (Round 2 — Critical)
+
+- **P0**: Removed hardcoded master key in `ghost_channel_gate.py` — now derived from env var or install path hash
+- **P0**: Removed plaintext key output from `__main__` self-test
+- **P1**: Multi-layer SQL injection defense in `mcp_router.py` (6 attack vectors blocked: stacked queries, comments, block comments, multi-statement, WHERE injection)
+- **P1**: Error responses no longer expose exception details to client (`logger.error` + `exc_info=True` server-side only)
+- **P1**: Ghost Channel HMAC key now persisted to `.ghost_channel_key` file (survives restarts)
+- **P1**: CORS defaults to same-origin (empty string) instead of wildcard `*`
+- **P2**: Atomic request counter with `threading.Lock`
+- **P2**: Safe integer parsing for 4 query parameter locations (`_safe_int()`)
+- **P2**: XSS fix in `chat.html` — `esc()` for audit trail and role distribution `innerHTML`
+- **P2**: Replaced silent `except: pass` with `logging.warning()` in 4 brain_core modules
+
+### Production Features (Round 3)
+
+- **API Authentication**: Optional Bearer token middleware via `QSPECTRUM_API_TOKEN` env var. Disabled by default for localhost mode.
+- **Structured Logging**: JSON log format via `QSPECTRUM_LOG_FORMAT=json`. Request ID tracking (`uuid.uuid4().hex[:8]`) for all API calls.
+- **Docker Support**: Multi-stage `Dockerfile` (python:3.12-slim), `.dockerignore`, non-root user, health check endpoint.
+- **CI/CD**: GitHub Actions workflow (`.github/workflows/ci.yml`) — Python 3.10/3.12/3.14 matrix, pytest, `--status`, security validation.
+- **Security Script**: `scripts/security-check.py` — 17 automated security checks, CI-integrated.
+
+### Documentation
+
+- README: Security features table, Docker deployment section, environment variables reference
+- .gitignore: Debug output file patterns added
+
+### Fixed (Round 2)
+
+- **LAUNCH.html**: Version v4.0 → v3.0, Python requirement 3.10+ → 3.8+
+- **config.py**: Typo "negotation" → "negotiation"
+
+### Verified
+
+- 155/158 pytest pass (3 need running Server, baseline-consistent)
+- 17/17 security-check.py pass
+- `--status`: ALL GREEN
+- SQL injection: 5/5 attack vectors blocked
+- Key persistence: cross-instance consistent
+
+---
+
 ## [10.0-verified] — 2026-04-20
 
 Comprehensive verification pass across 6 rounds covering every user path.

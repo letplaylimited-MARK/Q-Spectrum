@@ -1,0 +1,51 @@
+# Tests
+tests/
+.pytest_cache/
+
+# Git
+.git/
+.gitignore
+
+# Documentation artifacts (not needed at runtime)
+AUDIT-*.html
+FINAL-AUDIT-*.html
+PUSH-REPORT.html
+Q-SPECTRUM-DELIVERY.html
+Q-SPECTRUM-VERIFIED.html
+SANDBOX-SIMULATION-REPORT.md
+FINDINGS-REGISTRY.md
+FIXES-APPLIED.md
+
+# IDE/Editor
+.vscode/
+.idea/
+
+# Debug/output files
+*.txt
+!requirements.txt
+
+# Runtime state
+_HANDOFF/
+*.db
+*.db-wal
+*.db-shm
+.ghost_channel_key
+.ghost_channel_state.json
+.first_run_done
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Archives
+Archive/
+
+# OpenCode
+.opencode/
+
+# Memory
+MEMORY.md
