@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
-verify-integration.py — 智腦整合驗證 v1.0
+verify-integration.py — 智腦整合驗證 v1.1
 每次會話啟動時執行。逐項確認，**不跳過**。
 誠實原則：有 FAIL 就不能進入下一步。
+
+v1.1 修復:
+- subprocess 使用 encoding='utf-8', errors='replace' 避免 Windows 編碼崩潰
+- platform_restored.db 降級為可選（首次交付只有 platform.db）
 """
 import sqlite3
 import subprocess
@@ -41,7 +45,7 @@ print("=" * 60)
 print()
 
 # ─────────────────────────────────────────────
-# 🔴 P0: CRITICAL — 核心檔案存在性
+# P0: CRITICAL — 核心檔案存在性
 # ─────────────────────────────────────────────
 print("  [P0] 核心檔案檢查")
 
@@ -62,7 +66,7 @@ if db_exists:
           f"大小為 {db_path.stat().st_size} bytes（需要 > 0）")
 
 # ─────────────────────────────────────────────
-# 🔴 P0: CRITICAL — 路徑紀律（無硬編碼 C:\Users\）
+# P0: CRITICAL — 路徑紀律（無硬編碼 C:\Users\）
 # ─────────────────────────────────────────────
 print()
 print("  [P0] 路徑紀律檢查（禁止 C:\\Users\\ 硬編碼）")
@@ -70,7 +74,8 @@ print("  [P0] 路徑紀律檢查（禁止 C:\\Users\\ 硬編碼）")
 try:
     result = subprocess.run(
         r'rg -n "C:\\Users\\" --type py --type md .',
-        shell=True, capture_output=True, text=True, cwd=ROOT)
+        shell=True, capture_output=True, cwd=ROOT,
+        encoding='utf-8', errors='replace')
     violations = result.stdout.strip()
     check("無 C:\\Users\\ 硬編碼", not violations,
           f"違規：{violations[:500] if violations else 'none'}")
@@ -78,17 +83,31 @@ except Exception:
     warn("ripgrep 不可用，跳過路徑檢查", False, "需安裝 ripgrep")
 
 # ─────────────────────────────────────────────
-# 🟡 P1: HIGH — 資料庫完整性
+# P1: HIGH — 資料庫完整性
 # ─────────────────────────────────────────────
 print()
 print("  [P1] 資料庫完整性檢查")
 
-restored_path = ROOT / "AI项目管理" / "Platform" / "db" / "platform_restored.db"
-check("platform_restored.db 存在", restored_path.exists())
+# v1.1: 優先使用 platform.db，platform_restored.db 作為可選備份
+db_dir = ROOT / "AI项目管理" / "Platform" / "db"
+platform_path = db_dir / "platform.db"
+restored_path = db_dir / "platform_restored.db"
 
+# 決定使用哪個數據庫進行驗證
 if restored_path.exists():
+    verify_db_path = restored_path
+    check("platform_restored.db 存在", True, "使用備份數據庫驗證")
+elif platform_path.exists():
+    verify_db_path = platform_path
+    check("platform.db 可讀取 (restored 不存在)", True,
+          "首次運行時只存在 platform.db，正常")
+else:
+    verify_db_path = None
+    check("數據庫存在", False, "platform.db 和 platform_restored.db 均不存在")
+
+if verify_db_path:
     try:
-        conn = sqlite3.connect(str(restored_path))
+        conn = sqlite3.connect(str(verify_db_path))
         cursor = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
         tables = [row[0] for row in cursor.fetchall()]
@@ -116,7 +135,7 @@ if restored_path.exists():
         check("資料庫可讀取", False, str(e))
 
 # ─────────────────────────────────────────────
-# 🟡 P1: HIGH — 測試完整性
+# P1: HIGH — 測試完整性
 # ─────────────────────────────────────────────
 print()
 print("  [P1] 測試與腳本檢查")
@@ -132,7 +151,7 @@ check(f"平台腳本 ({len(script_files)}) >= 5", len(script_files) >= 5,
       f"實際 {len(script_files)} 個")
 
 # ─────────────────────────────────────────────
-# 🟡 P1: HIGH — 長期記憶系統完整性
+# P1: HIGH — 長期記憶系統完整性
 # ─────────────────────────────────────────────
 print()
 print("  [P1] 長期記憶系統檢查")
@@ -164,7 +183,7 @@ if handoff_dir.exists():
               f"實際 {entry_count} 條記憶，預期 >= 3")
 
 # ─────────────────────────────────────────────
-# 🟢 P2: NORMAL — 殘留文件檢查
+# P2: NORMAL — 殘留文件檢查
 # ─────────────────────────────────────────────
 print()
 print("  [P2] 殘留文件檢查")
@@ -221,18 +240,18 @@ else:
 print()
 print("=" * 60)
 if errors:
-    print(f"  ❌ {len(errors)} 個錯誤（必須修復）")
+    print(f"  {len(errors)} 個錯誤（必須修復）")
     for e in errors:
-        print(f"     ❌ {e}")
+        print(f"     x {e}")
 if warnings:
-    print(f"  ⚠️  {len(warnings)} 個警告（建議修復）")
+    print(f"  {len(warnings)} 個警告（建議修復）")
     for w in warnings:
-        print(f"     ⚠️  {w}")
+        print(f"     ! {w}")
 
 if errors:
     print(f"\n  請先修復以上 {len(errors)} 個問題再繼續。")
     print("  誠實原則：不能跳過問題開始工作。")
     sys.exit(1)
 else:
-    print("  ✅ 全部檢查通過，可以開始工作")
+    print("  OK 全部檢查通過，可以開始工作")
     sys.exit(0)

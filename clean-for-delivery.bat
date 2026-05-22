@@ -97,11 +97,27 @@ for %%f in (ROUND17_PROBE_DRIFT_NEW_DOC.md ROUND17_PROBE_TEST.md ROUND17_TEST.md
     )
 )
 
+REM Ghost channel key & state (receiver generates their own trial)
+if exist .ghost_channel_key (
+    del /q .ghost_channel_key 2>nul
+    echo     [v] removed: .ghost_channel_key
+)
+if exist .ghost_channel_state.json (
+    del /q .ghost_channel_state.json 2>nul
+    echo     [v] removed: .ghost_channel_state.json
+)
+
+REM Meta backup DB
+if exist "AI项目管理\Platform\db\.meta_backup.db" (
+    del /q "AI项目管理\Platform\db\.meta_backup.db" 2>nul
+    echo     [v] removed: .meta_backup.db
+)
+
 REM Secondary DB files (keep only platform.db + platform_restored.db)
 for %%f in (contact_channel.db decision_layer.db knowledge_checkpoint.db knowledge_graph.db knowledge_pipeline.db project_memory.db projects.db qspectrum.db result_layer.db task_manager.db user_resources.db) do (
     if exist "%%f" (
         del /q "%%f" 2>nul
-        echo     [✓] removed runtime: %%f
+        echo     [v] removed runtime: %%f
     )
 )
 
