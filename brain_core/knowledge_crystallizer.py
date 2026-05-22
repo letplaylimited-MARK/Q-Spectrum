@@ -8,8 +8,11 @@ Crystallization flow:
   5. Graph Update — update knowledge graph
 """
 
+import logging
 from dataclasses import dataclass
 from typing import List
+
+logger = logging.getLogger("q-spectrum.knowledge-crystallizer")
 
 
 @dataclass
@@ -83,5 +86,5 @@ class KnowledgeCrystallizer:
                     family=collaboration_result.family,
                 )
                 collaboration_result.knowledge_deposited += 1
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning(f"Knowledge deposit failed: {e}")

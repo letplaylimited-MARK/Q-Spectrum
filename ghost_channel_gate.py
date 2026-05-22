@@ -106,9 +106,20 @@ class ActivationKeyManager:
     KEY_FILE = ".ghost_channel_key"
     STATE_FILE = ".ghost_channel_state.json"
 
-    # Built-in developer master key (always valid, enterprise tier)
-    MASTER_KEY_HASH = hashlib.sha256(b"qspectrum-dev-master-2026").hexdigest()[:16]
-    MASTER_KEY = f"GC-ENTERPRISE-{MASTER_KEY_HASH}"
+    # Master key derived from environment variable (never hardcode secrets).
+    # Fallback generates a per-installation key on first run.
+    @classmethod
+    def _compute_master_key(cls) -> str:
+        seed = os.environ.get("QSPECTRUM_MASTER_SEED", "")
+        if seed:
+            h = hashlib.sha256(seed.encode()).hexdigest()[:16]
+        else:
+            # Deterministic per-installation key from project root path
+            root = str(Path(__file__).parent.resolve())
+            h = hashlib.sha256(root.encode()).hexdigest()[:16]
+        return f"GC-ENTERPRISE-{h}"
+
+    MASTER_KEY: str = ""  # populated at module load
 
     def __init__(self, project_root: str = None):
         self._root = Path(project_root or Path(__file__).parent)
@@ -301,6 +312,9 @@ class ActivationKeyManager:
             "webhooks": tier.webhooks,
         }
 
+# Populate MASTER_KEY at module load time
+ActivationKeyManager.MASTER_KEY = ActivationKeyManager._compute_master_key()
+
 
 # ─── The Gate Itself ─────────────────────────────────────────
 
@@ -434,9 +448,7 @@ if __name__ == "__main__":
     gate.record_usage()
     print(f"  After 3 msgs:  {gate.get_status()['total_messages']} total")
 
-    # Test master key
-    print(f"\n  Master Key:    {ActivationKeyManager.MASTER_KEY}")
-
+    # Test master key (do NOT print the key itself)
     master_status = ActivationKeyManager().validate(ActivationKeyManager.MASTER_KEY)
     print(f"  Master Valid:  {master_status.valid}")
     print(f"  Master Tier:   {master_status.tier}")

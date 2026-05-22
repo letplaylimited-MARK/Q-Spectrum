@@ -1329,8 +1329,8 @@ function updateAuditTrail(data) {
   const auditHTML = entries.map(e => `
     <div class="audit-entry">
       <div class="time">${new Date(e.timestamp).toLocaleTimeString()}</div>
-      <div class="action">${e.action}</div>
-      <div class="id">ID: ${e.transaction_id?.substring(0, 8) || '—'}</div>
+      <div class="action">${esc(e.action)}</div>
+      <div class="id">ID: ${esc(e.transaction_id?.substring(0, 8) || '—')}</div>
     </div>
   `).join('');
 
@@ -1482,7 +1482,7 @@ async function fetchClosedLoopDashboard() {
         const rolesEl = document.getElementById("poRoles");
         rolesEl.innerHTML = '';
         for (const [role, cnt] of Object.entries(aggRes.role_distribution || {}).slice(0, 6)) {
-          rolesEl.innerHTML += `<span style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:.62rem">${role}: ${cnt}</span>`;
+          rolesEl.innerHTML += `<span style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:.62rem">${esc(role)}: ${esc(String(cnt))}</span>`;
         }
       } catch(e) {}
     }

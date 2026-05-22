@@ -11,7 +11,10 @@ When adding Dual-Loop Brain components (KnowledgeOrchestrator, HybridRouter,
 PeerCollaboration, etc.), add them to QSpectrumEngine, NOT to this class.
 """
 
+import logging
 import sys
+
+logger = logging.getLogger("q-spectrum.brain")
 
 from brain_core.capabilities import CapabilityRegistry, ComponentRegistry
 from brain_core.config import (
@@ -33,7 +36,8 @@ def _load_brain_config():
     try:
         import brain_config
         return getattr(brain_config, "BRAIN", {})
-    except Exception:
+    except ImportError:
+        logger.debug("brain_config not found, using empty config")
         return {}
 
 

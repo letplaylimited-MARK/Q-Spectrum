@@ -263,3 +263,5 @@ Q-SpecTrum (通用框架) ←→ WorkBuddy (垂直业务)
 ---
 
 *Q-SpecTrum MEMORY V1.0 | 与WorkBuddy协同进化*
+
+## 3. Knowledge Insights

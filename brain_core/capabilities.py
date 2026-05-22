@@ -1,6 +1,9 @@
 """Capabilities module — ComponentRegistry + capability registration."""
 
+import logging
 from typing import Any, Callable, Dict, List, Optional
+
+logger = logging.getLogger("q-spectrum.capabilities")
 
 
 class ComponentRegistry:
@@ -24,8 +27,8 @@ class ComponentRegistry:
         for callback in self._hooks.get(f"on_register:{component_type}", []):
             try:
                 callback(name, instance)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning(f"Component callback error for {component_type}/{name}: {e}")
         return True
 
     def get(self, component_type: str, name: Optional[str] = None) -> Any:

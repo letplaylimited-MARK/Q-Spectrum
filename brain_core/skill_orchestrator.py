@@ -6,7 +6,10 @@ Invokes relevant skills at key points in the collaboration flow:
 - During Round 5 arbitration: invoke sedimentation skills
 """
 
+import logging
 from typing import Dict, List
+
+logger = logging.getLogger("q-spectrum.skill-orchestrator")
 
 
 class SkillOrchestrator:
@@ -46,7 +49,7 @@ class SkillOrchestrator:
 
         return results
 
-    def _execute_skill(self,skill_name: str, query: str,
+    def _execute_skill(self, skill_name: str, query: str,
                         context: Dict) -> Dict:
         """Execute a single skill."""
         if not self.engine:
@@ -57,7 +60,7 @@ class SkillOrchestrator:
                 result = self.engine.real_skills.execute(skill_name, query)
                 if result.get("status") == "ok":
                     return result
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning(f"Skill execution failed for {skill_name}: {e}")
 
         return {"status": "skipped", "message": f"Skill {skill_name} not available"}

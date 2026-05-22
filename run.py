@@ -12,9 +12,13 @@ Usage:
   python run.py                      # Interactive chat (default)
   python run.py --demo               # Run 8 demo scenarios
   python run.py --status             # System health check
-  python run.py --query "你的問題"    # Single query
+  python run.py --query "你的問題"    # Single query (multi-word supported)
+  python run.py --web                # Web UI on port 8765
+  python run.py --web --port 9000    # Web UI on custom port
+  python run.py --web --provider openai  # Web UI with specific LLM
   python run.py --chatroom           # Alias for --web (browser chatroom)
   python run.py --e2e                # Run E2E test suite
+  python run.py --guide              # Guided onboarding (recommended first use)
   python run.py --help               # Show this help
 
 LLM Configuration (env vars):
@@ -410,7 +414,7 @@ def main():
     elif args[0] == "--status":
         cmd_status()
     elif args[0] == "--query" and len(args) > 1:
-        cmd_query(args[1])
+        cmd_query(" ".join(args[1:]))
     elif args[0] == "--chatroom":
         cmd_chatroom()
     elif args[0] == "--web":

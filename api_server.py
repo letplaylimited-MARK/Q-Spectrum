@@ -10,21 +10,37 @@ Usage:
   python api_server.py --port 9000        # Custom port
   python api_server.py --provider openai  # Use real LLM
 
-Endpoints:
-  GET  /                            → Redirect to chat.html
-  GET  /api/status                  → System health + role/protocol counts
-  POST /api/chat                    → Full pipeline: Secretary → GhostChannel → Role → LLM
-  GET  /api/roles                   → All 15 roles with families
-  GET  /api/knowledge               → Search knowledge base
-  GET  /api/history                 → Session interaction history
-  POST /api/reset                   → Reset session state
-  GET  /api/config                  → Current LLM/system config
-  GET  /api/ghost-channel/status    → Ghost Channel nervous system status
-  GET  /api/ghost-channel/network   → Role communication graph
-  GET  /api/ghost-channel/audit     → Audit trail
-  GET  /api/deerflow/status         → DeerFlow integration status
-  GET  /api/deerflow/queue          → DeerFlow task queue
-  GET  /api/deerflow/skills         → DeerFlow skills registry
+Endpoints (84 total across 20 categories):
+  Core:
+    GET  /                            → Redirect to chat.html
+    GET  /api/status                  → System health + role/protocol counts
+    POST /api/chat                    → Full pipeline: Secretary → GhostChannel → Role → LLM
+    GET  /api/roles                   → All 15 roles with families
+    GET  /api/knowledge?q=...        → Search knowledge base
+    GET  /api/history                 → Session interaction history
+    POST /api/reset                   → Reset session state
+    GET  /api/config                  → Current LLM/system config
+  Ghost Channel:
+    GET  /api/ghost-channel/status|network|audit
+  DeerFlow:
+    GET  /api/deerflow/status|queue|skills
+  Closed Loop: /api/closed-loop/*
+  Knowledge Pipeline: /api/knowledge-pipeline/*
+  Projects: /api/projects/{list,active,aggregate,create,switch}
+  Components: /api/components/{list,history}
+  Growth: /api/growth/status
+  Tasks: /api/tasks/{board,analytics,status,create,update}
+  Contact: /api/contact/{status,tickets,notifications}
+  Search: /api/search
+  Memory: /api/memory/{status,projects,chatrooms,history,search,...}
+  Negotiation: /api/negotiation/status
+  Files: /api/files/{scan,read,analyze,tree,write}
+  5-Layer: /api/{resource,result,decision}-layer/*
+  Scenarios: /api/scenarios/{list,status,start,advance,sandbox}
+  Skills: /api/skills/{list,execute}, /api/deerflow-skills/*
+  Formulas: /api/formulas/status
+
+  Run 'python run.py --status' or see API docs for full details.
 
 Architecture:
   Browser (chat.html)
@@ -74,7 +90,20 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
     llm_name = "mock"
     session_history = []
     start_time = __import__('time').time()
-    _engine_lock = __import__('threading').Lock()  # Thread-safe engine access
+    _engine_lock = __import__('threading').RLock()  # Reentrant lock for engine access
+    _counter_lock = __import__('threading').Lock()   # Protects _active_requests
+    _cors_origin = os.environ.get("QSPECTRUM_CORS_ORIGIN", "")  # Empty = same-origin only
+    _active_requests = 0  # Track concurrent requests
+    _max_concurrent = int(os.environ.get("QSPECTRUM_MAX_CONCURRENT", "8"))  # Concurrency limit
+
+    @staticmethod
+    def _safe_int(value, default=30, lo=1, hi=1000):
+        """Parse query param to int with safe bounds."""
+        try:
+            v = int(value)
+            return max(lo, min(hi, v))
+        except (ValueError, TypeError):
+            return default
 
     def do_GET(self):
         from urllib.parse import unquote
@@ -186,7 +215,7 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
             q = parse_qs(parsed.query).get("q", [""])[0]
             domains = parse_qs(parsed.query).get("domains", [None])[0]
             project = parse_qs(parsed.query).get("project", [None])[0]
-            limit = int(parse_qs(parsed.query).get("limit", ["30"])[0])
+            limit = self._safe_int(parse_qs(parsed.query).get("limit", ["30"])[0], default=30, hi=200)
             self._handle_global_search(q, domains, project, limit)
         elif path == "/api/search/status":
             gs = self.engine.global_search
@@ -202,7 +231,7 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
         elif path == "/api/memory/history":
             project = parse_qs(parsed.query).get("project", [None])[0]
             chatroom = parse_qs(parsed.query).get("chatroom", [None])[0]
-            limit = int(parse_qs(parsed.query).get("limit", ["50"])[0])
+            limit = self._safe_int(parse_qs(parsed.query).get("limit", ["50"])[0], default=50, hi=200)
             self._handle_memory_history(project, chatroom, limit)
         elif path == "/api/memory/search":
             q = parse_qs(parsed.query).get("q", [""])[0]
@@ -217,7 +246,7 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
         # File Operations endpoints (Point #12)
         elif path == "/api/files/scan":
             project = parse_qs(parsed.query).get("project", [str(ROOT)])[0]
-            depth = int(parse_qs(parsed.query).get("depth", ["3"])[0])
+            depth = self._safe_int(parse_qs(parsed.query).get("depth", ["3"])[0], default=3, hi=20)
             self._handle_file_scan(project, depth)
         elif path == "/api/files/read":
             fpath = parse_qs(parsed.query).get("path", [""])[0]
@@ -229,7 +258,7 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
             self._handle_file_analyze(project)
         elif path == "/api/files/tree":
             project = parse_qs(parsed.query).get("project", [str(ROOT)])[0]
-            depth = int(parse_qs(parsed.query).get("depth", ["5"])[0])
+            depth = self._safe_int(parse_qs(parsed.query).get("depth", ["5"])[0], default=5, hi=20)
             self._handle_file_tree(project, depth)
         # 5-Layer Architecture endpoints
         elif path == "/api/resource-layer/status":
@@ -285,6 +314,15 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
                 return
             # Serve static files
             super().do_GET()
+
+    # Override send_error to return JSON for API paths
+    def send_error(self, code, message=None, explain=None):
+        """Return JSON error response for /api/* paths, HTML for static files."""
+        if self.path.startswith("/api/"):
+            self._send_json({"error": message or self.responses.get(code, ("Error",))[0],
+                             "status": code, "path": self.path}, code)
+        else:
+            super().send_error(code, message, explain)
 
     def do_POST(self):
         parsed = urlparse(self.path)
@@ -395,19 +433,36 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
             if len(message) > 10000:
                 message = message[:10000]
 
-            # Process through engine (thread-safe via ThreadingHTTPServer)
+            # Process through engine (thread-safe with concurrency limit)
             start = time.time()
+            with QSpectrumAPIHandler._counter_lock:
+                if QSpectrumAPIHandler._active_requests >= QSpectrumAPIHandler._max_concurrent:
+                    busy = True
+                    cur = QSpectrumAPIHandler._active_requests
+                else:
+                    QSpectrumAPIHandler._active_requests += 1
+                    busy = False
+            if busy:
+                self._send_json({
+                    "success": False,
+                    "error": f"Server busy — {cur} requests in progress "
+                             f"(max: {QSpectrumAPIHandler._max_concurrent}). Please retry.",
+                    "routing": {"role_name": "System", "family": "system"},
+                }, 429)
+                return
             try:
                 with self._engine_lock:
                     result = self.engine.process(message, context)
             except Exception as proc_err:
+                logger.error(f"Engine processing error: {proc_err}", exc_info=True)
                 self._send_json({
                     "success": False,
-                    "error": f"Engine processing error: {proc_err}",
-                    "response": f"处理出错，请重试。Error: {proc_err}",
+                    "error": "Engine processing error — check server logs for details",
                     "routing": {"role_name": "System", "family": "system"},
-                }, 200)
+                }, 500)
                 return
+            finally:
+                QSpectrumAPIHandler._active_requests -= 1
             elapsed_ms = (time.time() - start) * 1000
 
             # Extract knowledge context info
@@ -1694,9 +1749,12 @@ class QSpectrumAPIHandler(SimpleHTTPRequestHandler):
             pass  # Client disconnected — safe to ignore
 
     def _add_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
+        origin = self._cors_origin if self._cors_origin else (self.headers.get("Origin", ""))
+        self.send_header("Access-Control-Allow-Origin", origin)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        if origin and origin != "*":
+            self.send_header("Vary", "Origin")
 
     def log_message(self, format, *args):
         """Suppress noisy access logs for static files, show API calls."""

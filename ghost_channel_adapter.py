@@ -80,7 +80,9 @@ class GhostChannelAdapter:
     """
 
     def __init__(self):
-        self._key = os.urandom(32)
+        # Load or generate persistent encryption key
+        self._key_file = os.path.join(os.path.dirname(__file__), ".ghost_channel_key")
+        self._key = self._load_or_generate_key()
         self._audit_log: List[GhostAuditEntry] = []
         self._vector_clocks: Dict[str, Dict[str, int]] = {}  # role -> {role: seq}
         self._role_states: Dict[str, dict] = {}  # role_code -> current state snapshot
@@ -107,6 +109,24 @@ class GhostChannelAdapter:
             f"(mode: {'real_bridge' if self._real_bridge else 'standalone'}, "
             f"capabilities: A,B,C,D,E,F,G,H,I,J)"
         )
+
+    def _load_or_generate_key(self) -> bytes:
+        """Load persistent key from file, or generate and save a new one."""
+        try:
+            if os.path.exists(self._key_file):
+                data = open(self._key_file, "rb").read()
+                if len(data) == 32:
+                    return data
+        except Exception:
+            logger.warning("Ghost Channel: Failed to load key file, generating new key")
+        key = os.urandom(32)
+        try:
+            with open(self._key_file, "wb") as f:
+                f.write(key)
+            logger.info("Ghost Channel: New encryption key generated and saved")
+        except Exception as e:
+            logger.warning(f"Ghost Channel: Could not persist key ({e}), using ephemeral key")
+        return key
 
     # ─── A: Delta Incremental Sync ───────────────────────
 

@@ -135,14 +135,27 @@ class McpRouter:
         return {"protocols": db.get_all_protocols()}
 
     def _handle_query_database(self, sql=None, **kw):
-        sql_upper = sql.strip().upper()
+        if not sql or not isinstance(sql, str):
+            return {"error": "SQL query required (non-empty string)"}
+        sql_stripped = sql.strip().rstrip(";").strip()
+        sql_upper = sql_stripped.upper()
+        # Only allow single SELECT — reject multi-statement, comments, and DML
         if not sql_upper.startswith("SELECT"):
-            return {"error": "Only SELECT queries allowed"}
+            return {"error": "Only SELECT queries are allowed"}
+        if "--" in sql_stripped or "/*" in sql_stripped:
+            return {"error": "SQL comments are not permitted"}
+        if ";" in sql_stripped:
+            return {"error": "Only a single SELECT statement is allowed (no semicolons)"}
+        blocked = ("DROP ", "DELETE ", "INSERT ", "UPDATE ", "ALTER ", "CREATE ",
+                   "EXEC ", "EXECUTE ", "GRANT ", "REVOKE ", "ATTACH ")
+        for kw_frag in blocked:
+            if kw_frag in sql_upper:
+                return {"error": f"Prohibited keyword detected: {kw_frag.strip()}"}
         db = getattr(self.engine, 'db', None)
         if not db:
             return {"error": "DB not available"}
         try:
-            results = db.query(sql)
+            results = db.query(sql_stripped)
             if results and hasattr(results[0], 'keys'):
                 results = [dict(r) for r in results]
             return {"results": results, "count": len(results) if results else 0}

@@ -47,7 +47,7 @@ def detect_writable_dir() -> Path:
 def detect_modules() -> dict:
     """Detect which optional modules are importable. Returns dict of module_name→bool."""
     checks = {
-        "negotation": ("negotiation_engine", "NegotiationEngine"),
+        "negotiation": ("negotiation_engine", "NegotiationEngine"),
         "project_memory": ("project_memory", "ProjectMemoryManager"),
         "global_search": ("global_search", "GlobalSearchEngine"),
         "role_config": ("role_config", "YAMLRoleLoader"),
