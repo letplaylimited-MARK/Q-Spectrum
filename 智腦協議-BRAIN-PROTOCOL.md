@@ -681,8 +681,8 @@ _HANDOFF/
      → P1 待辦: 2 項
      
   ✅ CRITICAL-REMINDERS.md 已讀取
-     → P0-001: platform.db 為 0 bytes (❌ 未修復)
-     → P0-002: C:\Users\ 硬編碼 (❌ 未修復)
+      → P0-001: platform.db 為 0 bytes (⚠️ 已修復，458KB)
+      → P0-002: C:\Users\ 硬編碼 (⚠️ 已修復)
      
   ✅ MEMORY-INDEX.md 已讀取
      → 共 8 條記憶

@@ -57,11 +57,12 @@ Q-SpecTrum/
 
 ## 已知問題（優先修復）
 
-1. `platform.db` 為 0 bytes（需拷貝 `platform_restored.db`）
-2. `AI项目管理/Platform/scripts/path_utils.py` 有 3 處 `C:\Users\` 硬編碼
+（無）— 所有已知問題均已修復。
 
 ## 已修復問題
 
+1. ~~`platform.db` 為 0 bytes（需拷貝 `platform_restored.db`）~~ ✅ platform.db 458KB, 40 表
+2. ~~`AI项目管理/Platform/scripts/path_utils.py` 有 3 處 `C:\Users\` 硬編碼~~ ✅ 已清除
 3. ~~文件數字不一致（47→40 表，748→85 行）~~ ✅ 已修復
 4. ~~測試殘留：`ROUND17_*`、`ORPHAN_TEST_DOC.md`~~ ✅ 已清理
 5. ~~`test_ai_model.py`/`test_developer.py`/`test_nontechnical.py` GBK 編碼錯誤~~ ✅ 已修復
