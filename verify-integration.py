@@ -157,7 +157,8 @@ print()
 print("  [P1] 長期記憶系統檢查")
 
 handoff_dir = ROOT / "_HANDOFF"
-check("_HANDOFF/ 目錄存在", handoff_dir.exists())
+# _HANDOFF is runtime-generated memory directory; not tracked by git
+warn("_HANDOFF/ 目錄存在 (運行時生成，非Git追蹤)", handoff_dir.exists())
 
 if handoff_dir.exists():
     status_file = handoff_dir / "STATUS.md"
